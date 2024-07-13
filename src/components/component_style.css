@@ -1,0 +1,20 @@
+.overflow-scroll {
+  overflow: scroll; /* Makes both horizontal and vertical overflow scrollable */
+  overflow-x: hidden; /* Hides horizontal scrollbar */
+}
+
+/* Styling the scrollbar for WebKit-based browsers (Chrome, Safari, Edge) */
+.overflow-scroll::-webkit-scrollbar {
+  width: 13px; /* Adjust the width of the vertical scrollbar */
+}
+
+.overflow-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px; /* More reasonable value for border-radius */
+}
+
+.overflow-scroll::-webkit-scrollbar-thumb {
+  background-color: #888; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* More reasonable value for border-radius */
+  border: 2px solid #f0f0f0; /* Optional: Add a border that matches the track */
+}
