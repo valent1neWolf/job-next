@@ -1,12 +1,13 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import JobListing from "@/components/job-listing";
-import { fetchProfile } from "@/actions";
+import { fetchProfile, fetchJobsRecruiter } from "@/actions";
 import { useEffect, useState } from "react";
 
 export default function JobsPage() {
   const { user } = useUser();
   const [profileInfo, setProfileInfo] = useState(null);
+  const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -19,5 +20,17 @@ export default function JobsPage() {
     loadProfile();
   }, [user?.id]);
 
-  return <JobListing profileInfo={profileInfo} user={user} />;
+  useEffect(() => {
+    const loadJobs = async () => {
+      if (profileInfo?.role === "recruiter") {
+        const fetchedJobs = await fetchJobsRecruiter(user.id);
+        setJobs(fetchedJobs?.data);
+      }
+    };
+
+    loadJobs();
+  }, [profileInfo]);
+
+  console.log(jobs, "jobs");
+  return <JobListing profileInfo={profileInfo} user={user} jobs={jobs} />;
 }

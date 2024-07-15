@@ -104,16 +104,17 @@ export const initialCandidateFormData = {
 
 export const postNewJobFormControls = [
   {
-    label: "Company Name",
-    name: "companyName",
-    placeholder: "Enter your company name",
-    componentType: "input",
-  },
-  {
     label: "Job Title",
     name: "title",
     placeholder: "Enter job title",
     componentType: "input",
+  },
+  {
+    label: "Company Name",
+    name: "companyName",
+    placeholder: "Enter your company name",
+    componentType: "input",
+    readOnly: true,
   },
   {
     label: "Job Type",

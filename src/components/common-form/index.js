@@ -22,6 +22,7 @@ export default function CommonForm({
 }) {
   function renderItemByComponentType(getCurentControl) {
     let content = null;
+    console.log("current control", getCurentControl);
     switch (getCurentControl.componentType) {
       case "input":
         content = (
@@ -41,6 +42,7 @@ export default function CommonForm({
                   [getCurentControl.name]: e.target.value,
                 })
               }
+              readOnly={getCurentControl?.readOnly}
               className="w-full h-[60px] px-4 border outline-none bg-gray-100 rounded text-lg drop-shadow-sm duration-200 ease-in-out focus:outline-none focus:ring-0 focus:ring-offset-0 focus:border-transparent focus:shadow-md focus:bg-white"
             />
           </div>

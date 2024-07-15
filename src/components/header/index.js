@@ -64,7 +64,7 @@ export default function Header({ user, profileInfo }) {
           </SheetTrigger>
           <SheetContent side="left">
             <Link className="mr-6 hidden lg:flex" href="#">
-              <h3>JOBSCO</h3>
+              <h3>KONDOR</h3>
             </Link>
             <div className="grid gap-2 py-6">
               <UserButton />
@@ -83,7 +83,7 @@ export default function Header({ user, profileInfo }) {
           </SheetContent>
         </Sheet>
         <Link className="hidden lg:flex mr-6 pl-4" href={"/"}>
-          JOBSCO
+          <img src="/images/kondor-vector.png" alt="logo" className="h-6 " />
         </Link>
         <nav className="ml-auto  hidden lg:flex gap-6">
           {menuItems.map((item) =>
