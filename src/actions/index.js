@@ -50,6 +50,7 @@ export async function postNewJobAction(formData, pathToRevalidate) {
     return {
       success: true,
       data: "Job created successfully",
+      message: JSON.parse(JSON.stringify(job)),
     };
   } catch (error) {
     console.log(error);

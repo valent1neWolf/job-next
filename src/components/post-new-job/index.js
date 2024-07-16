@@ -33,6 +33,8 @@ export default function PostNewJob({ profileInfo, user }) {
       jobFormData &&
       jobFormData.title.trim() !== "" &&
       jobFormData.location.trim() !== "" &&
+      jobFormData.experience.trim() !== "" &&
+      jobFormData.remote.trim() !== "" &&
       jobFormData.description.trim() !== "" &&
       jobFormData.type.trim() !== "" &&
       jobFormData.companyName.trim() !== ""

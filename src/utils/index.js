@@ -119,8 +119,16 @@ export const postNewJobFormControls = [
   {
     label: "Job Type",
     name: "type",
-    placeholder: "f.e. Full-time, Part-time, etc.",
-    componentType: "input",
+    options: ["Full-time", "Part-time", "Contract", "Internship"],
+    placeholder: "Select job type",
+    componentType: "select",
+  },
+  {
+    label: "Remote",
+    name: "remote",
+    componentType: "select",
+    options: ["Remote", "On-site", "Hybrid"],
+    placeholder: "Select if the job is remote",
   },
   {
     label: "Location",
@@ -131,8 +139,9 @@ export const postNewJobFormControls = [
   {
     label: "Experience",
     name: "experience",
-    placeholder: "Enter experience required for the job",
-    componentType: "input",
+    options: ["0-1 years", "1-3 years", "3-5 years", "5+ years"],
+    placeholder: "Select experience required for the job",
+    componentType: "select",
   },
   {
     label: "Description",
@@ -170,6 +179,7 @@ export const initialPostNewJobFormData = {
   companyName: "",
   title: "",
   type: "",
+  remote: "",
   location: "",
   experience: "",
   description: "",
@@ -178,3 +188,22 @@ export const initialPostNewJobFormData = {
   salary: "",
   additionalInfo: "",
 };
+
+export const jobAccordionFilters = [
+  {
+    trigger: "Job Type",
+    content: ["Full-time", "Part-time", "Contract", "Internship"],
+  },
+  {
+    trigger: "Remote",
+    content: ["Remote", "On-site", "Hybrid"],
+  },
+  {
+    trigger: "Location",
+    content: ["Remote", "On-site", "Hybrid"],
+  },
+  {
+    trigger: "Experience",
+    content: ["0-1 years", "1-3 years", "3-5 years", "5+ years"],
+  },
+];

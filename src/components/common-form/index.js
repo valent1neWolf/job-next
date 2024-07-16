@@ -22,7 +22,7 @@ export default function CommonForm({
 }) {
   function renderItemByComponentType(getCurentControl) {
     let content = null;
-    console.log("current control", getCurentControl);
+    // console.log("current control", getCurentControl);
     switch (getCurentControl.componentType) {
       case "input":
         content = (
