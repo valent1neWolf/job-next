@@ -9,14 +9,72 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { jobAccordionFilters } from "@/utils";
 
-export default function JobListing({ profileInfo, user, jobs }) {
+import { Label } from "@/components/ui/label";
+import { defaultJobAccordionFilters } from "@/utils";
+
+export default function JobListing({
+  profileInfo,
+  user,
+  jobs,
+  choosenFilters,
+  setChoosenFilters,
+}) {
   const [isLoading, setIsLoading] = useState(true);
   const [hovered, setHovered] = useState(null);
   const [openedFilters, setOpenedFilters] = useState([]);
+  const [jobAccordionFilters, setJobAccordionFilters] = useState(
+    defaultJobAccordionFilters
+  );
+
+  useEffect(() => {
+    // kiszedjük a létező helyeket a az állásokból
+    const locations = [...new Set(jobs.map((job) => job.location))];
+
+    // a kiszedet helykkel feltöltjük a Location contentjét
+    const updatedFilters = jobAccordionFilters.map((filter) => {
+      if (filter.trigger === "Location") {
+        return { ...filter, content: locations };
+      }
+      return filter;
+    });
+
+    setJobAccordionFilters(updatedFilters);
+  }, [jobs]);
+
+  const handleCheckboxChange = (e) => {
+    const { name, value, checked } = e.target;
+    // console.log(name, value, checked);
+    setChoosenFilters((prevFilters) => {
+      const existingFilterIndex = prevFilters.findIndex(
+        (f) => f.trigger === name
+      );
+      let updatedFilters = [...prevFilters];
+
+      if (existingFilterIndex >= 0) {
+        // Filter exists, update its content
+        if (checked) {
+          // Add value if checked
+          const updatedContent = new Set([
+            ...updatedFilters[existingFilterIndex].content,
+            value,
+          ]);
+          updatedFilters[existingFilterIndex].content =
+            Array.from(updatedContent);
+        } else {
+          // Remove value if unchecked
+          updatedFilters[existingFilterIndex].content = updatedFilters[
+            existingFilterIndex
+          ].content.filter((item) => item !== value);
+        }
+      } else if (checked) {
+        // Filter does not exist and checkbox is checked, add new filter
+        updatedFilters.push({ trigger: name, content: [value] });
+      }
+
+      return updatedFilters;
+    });
+  };
 
   const handleAccordionTrigger = (trigger) => {
     if (openedFilters.includes(trigger)) {
@@ -25,6 +83,9 @@ export default function JobListing({ profileInfo, user, jobs }) {
       setOpenedFilters([...openedFilters, trigger]);
     }
   };
+  useEffect(() => {
+    console.log(choosenFilters);
+  }, [choosenFilters]);
 
   return (
     <div>
@@ -57,6 +118,7 @@ export default function JobListing({ profileInfo, user, jobs }) {
               setHovered={setHovered}
               isLoading={isLoading}
               setIsLoading={setIsLoading}
+              choosenFilters={choosenFilters}
             />
           </div>
           <div className="bg-gray-200 mt-3 rounded-md md:col-span-1">
@@ -86,10 +148,17 @@ export default function JobListing({ profileInfo, user, jobs }) {
                             htmlFor={`${filter.trigger}-${contentIndex}`}
                             className="flex items-center py-1"
                           >
-                            <Checkbox
+                            <input
+                              type="checkbox"
                               id={`${filter.trigger}-${contentIndex}`}
                               name={filter.trigger}
                               value={contentItem}
+                              checked={choosenFilters.some(
+                                (f) =>
+                                  f.trigger === filter.trigger &&
+                                  f.content.includes(contentItem)
+                              )}
+                              onChange={handleCheckboxChange}
                               className="mr-2"
                             />
                             {contentItem}

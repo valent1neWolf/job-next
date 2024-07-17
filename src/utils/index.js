@@ -189,21 +189,25 @@ export const initialPostNewJobFormData = {
   additionalInfo: "",
 };
 
-export const jobAccordionFilters = [
+export const defaultJobAccordionFilters = [
   {
     trigger: "Job Type",
+    name: "type",
     content: ["Full-time", "Part-time", "Contract", "Internship"],
   },
   {
     trigger: "Remote",
+    name: "remote",
     content: ["Remote", "On-site", "Hybrid"],
   },
   {
     trigger: "Location",
-    content: ["Remote", "On-site", "Hybrid"],
+    name: "location",
+    content: [],
   },
   {
     trigger: "Experience",
+    name: "experience",
     content: ["0-1 years", "1-3 years", "3-5 years", "5+ years"],
   },
 ];

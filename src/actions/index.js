@@ -61,11 +61,23 @@ export async function postNewJobAction(formData, pathToRevalidate) {
   }
 }
 
-export async function fetchJobsRecruiter(id) {
+export async function fetchJobsRecruiter(id, filters) {
   await connectToDB();
+  let query = { recruiterId: id }; // Initialize query with recruiterId
+
+  if (filters) {
+    // Dynamically construct the query based on non-empty filters
+    filters.forEach((filter) => {
+      if (filter.content.length > 0) {
+        // Assuming you want to match any of the values in the content array
+        query[filter.name] = { $in: filter.content };
+      }
+    });
+  }
 
   try {
-    const allJobs = await Job.find({ recruiterId: id });
+    // Use the dynamically constructed query object in Job.find
+    const allJobs = await Job.find(query);
     return {
       success: true,
       data: JSON.parse(JSON.stringify(allJobs)),
