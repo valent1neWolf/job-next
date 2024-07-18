@@ -42,11 +42,14 @@ export async function fetchProfile(id) {
   }
 }
 
-export async function postNewJobAction(formData, pathToRevalidate) {
+export async function postNewJobAction(formData) {
   await connectToDB();
   try {
     const job = await Job.create(formData);
-    revalidatePath(pathToRevalidate);
+    // if (job && pathToRevalidate) {
+    // console.log("Revalidating path", pathToRevalidate);
+    // revalidatePath(pathToRevalidate);
+    // }
     return {
       success: true,
       data: "Job created successfully",
@@ -87,6 +90,25 @@ export async function fetchJobsRecruiter(id, filters) {
     return {
       success: false,
       message: "Job fetch failed",
+    };
+  }
+}
+
+//munka törlése
+export async function deleteJob(id) {
+  await connectToDB();
+  try {
+    await Job.findByIdAndDelete(id);
+
+    return {
+      success: true,
+      message: "Job deleted successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Job deletion failed",
     };
   }
 }

@@ -21,11 +21,13 @@ export default function Header({ user, profileInfo }) {
       show: true,
     },
     {
+      icon: "/login.svg",
       label: "Login",
       path: "/sign-in",
       show: !user,
     },
     {
+      icon: "/register.svg",
       label: "Register",
       path: "/sign-up",
       show: !user,

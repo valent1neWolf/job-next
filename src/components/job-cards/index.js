@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteJob } from "@/actions";
 
 export default function JobCards({
   jobs,
@@ -14,13 +15,19 @@ export default function JobCards({
   isLoading,
   setIsLoading,
   choosenFilters,
+  user,
+  jobToDelete,
+  setJobToDelete,
+  setJobs,
 }) {
+  // console.log("user at card", user?.id);
+
   useEffect(() => {
     setIsLoading(false);
   }, [jobs]);
 
   const noJobsFound = choosenFilters.some((filter) => filter.content.length);
-  console.log(noJobsFound, "noJobsFound");
+  // console.log(noJobsFound, "noJobsFound");
 
   function capitalize(s) {
     return s[0].toUpperCase() + s.slice(1);
@@ -61,6 +68,13 @@ export default function JobCards({
     }
   }
 
+  async function deleteJobAction(id) {
+    console.log("deleting job", id);
+    await deleteJob(id);
+    // lehet, hogy ezt nem szabadna csinálni, de legalább látszatra megoldja a problémát (más megoldás nem jut eszembe)
+    setJobs((currentJobs) => currentJobs.filter((job) => job._id !== id));
+  }
+
   return (
     <div className={`${isLoading ? "hidden" : ""}`}>
       {jobs && jobs.length > 0 && !isLoading ? (
@@ -69,25 +83,33 @@ export default function JobCards({
             key={job?._id}
             className="bg-gray-100 p-2 rounded-md mt-3 relative"
           >
-            <div className="absolute top-0 right-0 p-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="bi bi-three-dots-vertical"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                  </svg>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="mr-12">
-                  <DropdownMenuItem>Delete</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            {user?.id === job.recruiterId && (
+              <div className="absolute top-0 right-0 p-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-three-dots-vertical"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                    </svg>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="mr-12">
+                    <DropdownMenuItem
+                      onClick={() => {
+                        deleteJobAction(job._id);
+                      }}
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
             <div>
               <h1 className=" font-bold  text-xl">{capitalize(job?.title)}</h1>
               <p className="flex items-center pt-1">

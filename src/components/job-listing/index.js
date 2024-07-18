@@ -19,29 +19,40 @@ export default function JobListing({
   jobs,
   choosenFilters,
   setChoosenFilters,
+  setJobs,
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hovered, setHovered] = useState(null);
+  const [jobToDelete, setJobToDelete] = useState(null);
   const [openedFilters, setOpenedFilters] = useState([]);
+  const [locations, setLocations] = useState([
+    ...new Set(jobs.map((job) => job.location)),
+  ]);
   const [jobAccordionFilters, setJobAccordionFilters] = useState(
     defaultJobAccordionFilters
   );
 
+  //biztonság kedvéért mégegyszer majd átnézni ---
+  const noJobsFound = choosenFilters.some((filter) => filter.content.length);
+  console.log("noJobsFound", noJobsFound);
+
   useEffect(() => {
-    // kiszedjük a létező helyeket a az állásokból
-    const locations = [...new Set(jobs.map((job) => job.location))];
+    if (!noJobsFound && jobs.length > 0) {
+      const updatedLocations = [...new Set(jobs.map((job) => job.location))];
+      setLocations(updatedLocations);
+      console.log(updatedLocations, "updatedLocations");
 
-    // a kiszedet helykkel feltöltjük a Location contentjét
-    const updatedFilters = jobAccordionFilters.map((filter) => {
-      if (filter.trigger === "Location") {
-        return { ...filter, content: locations };
-      }
-      return filter;
-    });
+      const updatedFilters = jobAccordionFilters.map((filter) => {
+        if (filter.trigger === "Location") {
+          return { ...filter, content: updatedLocations };
+        }
+        return filter;
+      });
 
-    setJobAccordionFilters(updatedFilters);
+      setJobAccordionFilters(updatedFilters);
+    }
   }, [jobs]);
-
+  //--------------------------------------------
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
     // console.log(name, value, checked);
@@ -100,7 +111,11 @@ export default function JobListing({
             {profileInfo?.role === "candidate" ? (
               <p>Filter</p>
             ) : (
-              <PostNewJob profileInfo={profileInfo} user={user} />
+              <PostNewJob
+                profileInfo={profileInfo}
+                user={user}
+                setJobs={setJobs}
+              />
             )}
           </div>
         </div>
@@ -119,6 +134,10 @@ export default function JobListing({
               isLoading={isLoading}
               setIsLoading={setIsLoading}
               choosenFilters={choosenFilters}
+              user={user}
+              jobToDelete={jobToDelete}
+              setJobToDelete={setJobToDelete}
+              setJobs={setJobs}
             />
           </div>
           <div className="bg-gray-200 mt-3 rounded-md md:col-span-1">

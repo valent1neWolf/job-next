@@ -13,7 +13,7 @@ import CommonForm from "../common-form";
 import "../component_style.css";
 import { initialPostNewJobFormData, postNewJobFormControls } from "@/utils";
 import { postNewJobAction } from "@/actions";
-
+import { redirect } from "next/navigation";
 export default function PostNewJob({ profileInfo, user }) {
   const [isOpen, setIsOpen] = useState(false);
   const [jobFormData, setJobFormData] = useState({
@@ -42,10 +42,11 @@ export default function PostNewJob({ profileInfo, user }) {
   }
 
   async function createJobAction() {
-    await postNewJobAction(
-      { ...jobFormData, recruiterId: user?.id, applicants: [] },
-      "/jobs"
+    const { success, message } = await postNewJobAction(
+      { ...jobFormData, recruiterId: user?.id, applicants: [] }
+      // "/jobs"
     );
+    redirect("/jobs");
   }
 
   return (

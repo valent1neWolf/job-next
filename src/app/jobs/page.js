@@ -36,7 +36,7 @@ export default function JobsPage() {
     const loadJobs = async () => {
       if (profileInfo?.role === "recruiter") {
         const fetchedJobs = await fetchJobsRecruiter(
-          user.id,
+          user?.id,
           memoizedChoosenFilters
         );
         setJobs(fetchedJobs?.data);
@@ -54,6 +54,7 @@ export default function JobsPage() {
       jobs={jobs}
       choosenFilters={choosenFilters}
       setChoosenFilters={setChoosenFilters}
+      setJobs={setJobs}
     />
   );
 }
