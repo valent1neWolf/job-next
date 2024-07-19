@@ -112,3 +112,20 @@ export async function deleteJob(id) {
     };
   }
 }
+
+export async function fetchSingleJob(id) {
+  await connectToDB();
+  try {
+    const job = await Job.findById(id);
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(job)),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Job fetch failed",
+    };
+  }
+}

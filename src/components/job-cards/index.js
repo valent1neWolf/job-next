@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteJob } from "@/actions";
-
+import { useRouter } from "next/navigation";
 export default function JobCards({
   jobs,
   hovered,
@@ -21,6 +21,7 @@ export default function JobCards({
   setJobs,
 }) {
   // console.log("user at card", user?.id);
+  const router = useRouter();
 
   useEffect(() => {
     setIsLoading(false);
@@ -113,36 +114,21 @@ export default function JobCards({
             <div>
               <h1 className=" font-bold  text-xl">{capitalize(job?.title)}</h1>
               <p className="flex items-center pt-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  fill="currentColor"
-                  className="mr-2"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z" />
-                  <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z" />
-                </svg>
+                <img src="/building.svg" alt="building-svg" className="mr-2" />
                 {job?.companyName}
               </p>
               <p className="flex items-center pt-1">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  fill="currentColor"
-                  className="mr-2"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
-                  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                </svg>
+                <img src="/location.svg" alt="location-svg" className="mr-2" />
                 {job?.location}
               </p>
               <div className="flex items-baseline justify-between">
                 <div className="flex items-center gap-3">
-                  <Button className="mt-2 px-6">View Job</Button>
+                  <Button
+                    className="mt-2 px-6"
+                    onClick={() => window.open(`/jobs/${job._id}`)}
+                  >
+                    View Job
+                  </Button>
                   <Button
                     className="mt-2 bg-transparent border border-black"
                     onMouseEnter={() => setHovered(job._id)}

@@ -45,7 +45,7 @@ export default function Header({ user, profileInfo }) {
       show: user,
     },
     {
-      icon: "star.svg",
+      icon: "/star.svg",
       label: "Premium",
       path: "/membership",
       show: user,
@@ -98,7 +98,7 @@ export default function Header({ user, profileInfo }) {
               <Link
                 href={item.path}
                 key={item.label}
-                className="flex w-full items-center px-2 text-lg font-semibold rounded-md"
+                className="flex w-full items-center px-1 text-lg font-semibold rounded-md"
               >
                 <div className="flex flex-col justify-center items-center mt-2">
                   <img src={item?.icon} className="h-5" />
@@ -108,7 +108,7 @@ export default function Header({ user, profileInfo }) {
             ) : null
           )}
           <div className=" flex justify-center ">
-            <div className="mt-2 flex flex-col justify-center items-center">
+            <div className="mt-2 flex flex-col justify-center items-center px-1">
               <UserButton
                 id="me"
                 appearance={{
@@ -118,7 +118,7 @@ export default function Header({ user, profileInfo }) {
                 }}
               ></UserButton>
               {user ? (
-                <Label htmlFor="me" className="text-xs  pt-1">
+                <Label htmlFor="me" className="text-xs  pt-1 text-gray-600">
                   Profile
                 </Label>
               ) : null}
