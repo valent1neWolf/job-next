@@ -1,6 +1,6 @@
 "use client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommonForm from "../common-form";
 import {
   recruiterOnBoardFormControls,
@@ -10,8 +10,15 @@ import {
 } from "@/utils";
 import { useUser } from "@clerk/nextjs";
 import { createProfile } from "@/actions";
+import { createClient } from "@supabase/supabase-js";
+import "dotenv/config";
 
-export default function OnBoard() {
+const supabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_API_KEY
+);
+
+export default function OnBoard({ setLoading }) {
   const [currentTab, setCurrentTab] = useState("candidate");
   const [recruiterFormData, setRecruiterFormData] = useState(
     initialRecruiterFormData
@@ -19,15 +26,51 @@ export default function OnBoard() {
   const [candidateFormData, setCandidateFormData] = useState(
     initialCandidateFormData
   );
+  const [file, setFile] = useState(null);
+
+  useEffect(() => {
+    console.log("candidateFormData", candidateFormData);
+  }, [candidateFormData]);
 
   const currenAuthUser = useUser();
   console.log("currenAuthUser", currenAuthUser);
   const { user } = currenAuthUser;
-
+  console.log("user_email", user?.primaryEmailAddress?.emailAddress);
   function handleTabChange(value) {
     setCurrentTab(value);
   }
 
+  function handleFileChange(event) {
+    event.preventDefault();
+    setFile(event.target.files[0]);
+  }
+
+  async function handleUploadedPdfToSupabase() {
+    // URL-encode the file name to handle special characters
+
+    const { data, error } = await supabaseClient.storage
+      .from("job-board") // bucket name
+      .upload(`public/${user?.primaryEmailAddress?.emailAddress}`, file, {
+        cacheControl: "3600", // 1 hour
+        upsert: true, // Update the file if it already exists
+      });
+
+    console.log(data, error);
+
+    if (data) {
+      setCandidateFormData({
+        ...candidateFormData,
+        resume: data.path,
+      });
+    }
+  }
+
+  useEffect(() => {
+    if (file) {
+      console.log("file", file);
+      handleUploadedPdfToSupabase();
+    }
+  }, [file]);
   // console.log("recruiterFormData", recruiterFormData);
   // console.log("candidateFormData", candidateFormData);
 
@@ -43,14 +86,24 @@ export default function OnBoard() {
   }
 
   async function createProfileAction() {
-    const data = {
-      recruiterInfo: recruiterFormData,
-      role: "recruiter",
-      isPremiumUser: false,
-      userId: user?.id,
-      email: user?.primaryEmailAddress?.emailAddress,
-    };
+    const data =
+      currentTab === "candidate"
+        ? {
+            candidateInfo: candidateFormData,
+            role: "candidate",
+            isPremiumUser: false,
+            userId: user?.id,
+            email: user?.primaryEmailAddress?.emailAddress,
+          }
+        : {
+            recruiterInfo: recruiterFormData,
+            role: "recruiter",
+            isPremiumUser: false,
+            userId: user?.id,
+            email: user?.primaryEmailAddress?.emailAddress,
+          };
     await createProfile(data, "/onboard");
+    await setLoading(true);
   }
 
   function handleCandidateFormvalid() {
@@ -58,7 +111,9 @@ export default function OnBoard() {
       candidateFormData &&
       candidateFormData.name.trim() !== "" &&
       candidateFormData.skills.trim() !== "" &&
-      candidateFormData.country.trim() !== ""
+      candidateFormData.country.trim() !== "" &&
+      candidateFormData.phone.trim() !== "" &&
+      candidateFormData.resume.trim() !== ""
     );
   }
   return (
@@ -82,6 +137,8 @@ export default function OnBoard() {
             formData={candidateFormData}
             setFormData={setCandidateFormData}
             isBtnDisabled={!handleCandidateFormvalid()}
+            handleFileChange={handleFileChange}
+            action={createProfileAction}
           />
         </TabsContent>
         <TabsContent value="recruiter">

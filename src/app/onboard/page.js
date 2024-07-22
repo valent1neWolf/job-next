@@ -8,31 +8,38 @@ import { useRouter } from "next/navigation";
 function OnBoardPage() {
   const { user } = useUser();
   const [profileInfo, setProfileInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  useEffect(() => {
+    console.log(profileInfo, "profileInfo");
+  }, [profileInfo]);
+
   useEffect(() => {
     const loadProfile = async () => {
       if (user?.id) {
+        console.log("Loading profile for user ID:", user.id);
         const fetchedProfile = await fetchProfile(user.id);
+        console.log("Profile fetched:", fetchedProfile?.data);
         setProfileInfo(fetchedProfile?.data);
       }
     };
 
     loadProfile();
-  }, [user?.id]);
+  }, [user?.id, loading]);
 
   useEffect(() => {
-    // This effect listens for changes in profileInfo and navigates accordingly
+    console.log("ProfileInfo useEffect triggered:", profileInfo);
     if (profileInfo) {
+      console.log("Redirecting based on profileInfo:", profileInfo);
       if (profileInfo.role === "recruiter" && !profileInfo.isPremiumUser) {
         router.push("/membership");
       } else {
-        // Navigate to a different page if conditions are different
         router.push("/");
       }
     }
-  }, [profileInfo, router]);
+  }, [profileInfo]);
 
-  return <OnBoard />;
+  return <OnBoard setLoading={setLoading} />;
 }
 
 export default OnBoardPage;

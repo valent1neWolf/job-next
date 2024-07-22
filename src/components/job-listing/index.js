@@ -140,7 +140,7 @@ export default function JobListing({
               setJobs={setJobs}
             />
           </div>
-          <div className="bg-gray-200 mt-3 rounded-md md:col-span-1">
+          <div className="bg-gray-200 mt-3 rounded-md md:col-span-1 h-max">
             <div className="mx-auto w-11/12 my-3">
               {jobAccordionFilters.map((filter, index) => (
                 <Accordion

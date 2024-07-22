@@ -99,6 +99,7 @@ export const initialCandidateFormData = {
   curentCompany: "",
   phone: "",
   resume: "",
+  salary: "",
   coverLetter: "",
 };
 

@@ -33,11 +33,11 @@ export default function Header({ user, profileInfo }) {
       show: !user,
     },
 
-    {
-      label: "Activity",
-      path: "/activity",
-      show: profileInfo?.role === "candidate",
-    },
+    // {
+    //   label: "Activity",
+    //   path: "/activity",
+    //   show: profileInfo?.role === "candidate",
+    // },
     {
       icon: "/briefcase.svg",
       label: "Jobs",
