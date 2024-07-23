@@ -70,10 +70,10 @@ export default function Header({ user, profileInfo }) {
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <Link className="mr-6 hidden lg:flex" href="#">
+            <Link className="mr-6 relative -top-3" href="/">
               <h3>KONDOR</h3>
             </Link>
-            <div className="grid gap-2 py-6">
+            <div className="grid gap-2 py-1">
               <UserButton />
               {menuItems.map((item) =>
                 item.show ? (

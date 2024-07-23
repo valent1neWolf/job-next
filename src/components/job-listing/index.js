@@ -9,7 +9,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { defaultJobAccordionFilters } from "@/utils";
 
@@ -27,11 +37,11 @@ export default function JobListing({
   const [openedFilters, setOpenedFilters] = useState([]);
   const [locations, setLocations] = useState([
     ...new Set(jobs.map((job) => job.location)),
-  ]);
+  ]); //ez lehet feleslegesen maradt itt
   const [jobAccordionFilters, setJobAccordionFilters] = useState(
     defaultJobAccordionFilters
   );
-
+  const [showFiltersDrawer, setShowFiltersDrawer] = useState(false);
   //biztonság kedvéért mégegyszer majd átnézni ---
   const noJobsFound = choosenFilters.some((filter) => filter.content.length);
   console.log("noJobsFound", noJobsFound);
@@ -109,14 +119,18 @@ export default function JobListing({
           </h1>
           <div className="flex items-center">
             {profileInfo?.role === "candidate" ? (
-              <p>Filter</p>
-            ) : (
+              <img
+                src="/filter.svg"
+                className="md:hidden w-6"
+                onClick={() => setShowFiltersDrawer(true)}
+              />
+            ) : profileInfo?.role === "recruiter" ? (
               <PostNewJob
                 profileInfo={profileInfo}
                 user={user}
                 setJobs={setJobs}
               />
-            )}
+            ) : null}
           </div>
         </div>
         <div className="grid grid-cols-1 gap-x-3 md:grid-cols-3">
@@ -140,7 +154,7 @@ export default function JobListing({
               setJobs={setJobs}
             />
           </div>
-          <div className="bg-gray-200 mt-3 rounded-md md:col-span-1 h-max">
+          <div className=" hidden bg-gray-200 mt-3 rounded-md md:block md:col-span-1 h-max">
             <div className="mx-auto w-11/12 my-3">
               {jobAccordionFilters.map((filter, index) => (
                 <Accordion
@@ -189,6 +203,74 @@ export default function JobListing({
                 </Accordion>
               ))}
             </div>
+          </div>
+          <div>
+            <Drawer
+              open={showFiltersDrawer}
+              onOpenChange={setShowFiltersDrawer}
+            >
+              <DrawerContent className="max-h-fit overflow-y-scroll">
+                <DrawerHeader>
+                  <DrawerTitle>Set filters</DrawerTitle>
+                </DrawerHeader>
+                <DrawerFooter>
+                  <div>
+                    <div className="mx-auto w-11/12 my-3">
+                      {jobAccordionFilters.map((filter, index) => (
+                        <Accordion
+                          key={index}
+                          type="single"
+                          collapsible
+                          value={
+                            !openedFilters.includes(filter.trigger)
+                              ? filter.trigger
+                              : null
+                          }
+                        >
+                          <AccordionItem value={filter.trigger}>
+                            <AccordionTrigger
+                              className="hover:no-underline font-bold"
+                              onClick={() =>
+                                handleAccordionTrigger(filter.trigger)
+                              }
+                            >
+                              {filter.trigger}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              {filter.content.map(
+                                (contentItem, contentIndex) => (
+                                  <div key={contentIndex}>
+                                    <Label
+                                      htmlFor={`${filter.trigger}-${contentIndex}`}
+                                      className="flex items-center py-1 text-lg"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        id={`${filter.trigger}-${contentIndex}`}
+                                        name={filter.trigger}
+                                        value={contentItem}
+                                        checked={choosenFilters.some(
+                                          (f) =>
+                                            f.trigger === filter.trigger &&
+                                            f.content.includes(contentItem)
+                                        )}
+                                        onChange={handleCheckboxChange}
+                                        className="mr-2 h-5 w-5"
+                                      />
+                                      {contentItem}
+                                    </Label>
+                                  </div>
+                                )
+                              )}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+                      ))}
+                    </div>
+                  </div>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </div>
         </div>
       </div>

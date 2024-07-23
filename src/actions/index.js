@@ -66,20 +66,17 @@ export async function postNewJobAction(formData) {
 
 export async function fetchJobsRecruiter(id, filters) {
   await connectToDB();
-  let query = { recruiterId: id }; // Initialize query with recruiterId
+  let query = { recruiterId: id };
 
   if (filters) {
-    // Dynamically construct the query based on non-empty filters
     filters.forEach((filter) => {
       if (filter.content.length > 0) {
-        // Assuming you want to match any of the values in the content array
         query[filter.name] = { $in: filter.content };
       }
     });
   }
 
   try {
-    // Use the dynamically constructed query object in Job.find
     const allJobs = await Job.find(query);
     return {
       success: true,
@@ -120,6 +117,33 @@ export async function fetchSingleJob(id) {
     return {
       success: true,
       data: JSON.parse(JSON.stringify(job)),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Job fetch failed",
+    };
+  }
+}
+
+export async function fetchJobsCandidate(filters) {
+  await connectToDB();
+  let query = {};
+
+  if (filters) {
+    filters.forEach((filter) => {
+      if (filter.content.length > 0) {
+        query[filter.name] = { $in: filter.content };
+      }
+    });
+  }
+
+  try {
+    const allJobs = await Job.find(query);
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(allJobs)),
     };
   } catch (error) {
     console.log(error);

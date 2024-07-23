@@ -127,7 +127,7 @@ export default function JobCards({
                     className="mt-2 px-6"
                     onClick={() => window.open(`/jobs/${job._id}`)}
                   >
-                    View Job
+                    View <span className="hidden md:inline">&#8203; Job</span>
                   </Button>
                   <Button
                     className="mt-2 bg-transparent border border-black"

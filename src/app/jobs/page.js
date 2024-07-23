@@ -1,7 +1,11 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
 import JobListing from "@/components/job-listing";
-import { fetchProfile, fetchJobsRecruiter } from "@/actions";
+import {
+  fetchProfile,
+  fetchJobsRecruiter,
+  fetchJobsCandidate,
+} from "@/actions";
 import { useEffect, useState, useMemo } from "react";
 import { defaultJobAccordionFilters } from "@/utils";
 import React, { useRef } from "react";
@@ -17,6 +21,8 @@ export default function JobsPage() {
       content: [],
     }))
   );
+
+  //--------------------------------------------
   useEffect(() => {
     const loadProfile = async () => {
       if (user?.id) {
@@ -28,10 +34,13 @@ export default function JobsPage() {
     loadProfile();
   }, [user?.id]);
 
+  //--------------------------------------------
   const memoizedChoosenFilters = useMemo(
     () => choosenFilters,
     [JSON.stringify(choosenFilters)]
   );
+
+  //--------------------------------------------
   useEffect(() => {
     const loadJobs = async () => {
       if (profileInfo?.role === "recruiter") {
@@ -40,6 +49,9 @@ export default function JobsPage() {
           memoizedChoosenFilters
         );
         setJobs(fetchedJobs?.data);
+      } else if (profileInfo?.role === "candidate") {
+        const fetchedJobs = await fetchJobsCandidate(memoizedChoosenFilters);
+        setJobs(fetchedJobs?.data);
       }
     };
 
@@ -47,6 +59,8 @@ export default function JobsPage() {
   }, [profileInfo, memoizedChoosenFilters]);
 
   console.log(jobs, "jobs");
+
+  //--------------------------------------------
   return (
     <JobListing
       profileInfo={profileInfo}
