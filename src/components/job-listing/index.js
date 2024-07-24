@@ -134,13 +134,12 @@ export default function JobListing({
               : "Jobs Dashboard "}
           </h1>
           <div className="flex items-center">
-            {profileInfo?.role === "candidate" ? (
-              <img
-                src="/filter.svg"
-                className="md:hidden w-6"
-                onClick={() => setShowFiltersDrawer(true)}
-              />
-            ) : profileInfo?.role === "recruiter" ? (
+            <img
+              src="/filter.svg"
+              className="md:hidden w-6"
+              onClick={() => setShowFiltersDrawer(true)}
+            />
+            {profileInfo?.role === "recruiter" ? (
               <PostNewJob
                 profileInfo={profileInfo}
                 user={user}

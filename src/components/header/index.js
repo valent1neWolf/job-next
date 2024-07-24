@@ -12,6 +12,7 @@ import { AlignJustify } from "lucide-react";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
 export default function Header({ user, profileInfo }) {
   const menuItems = [
     {
@@ -57,27 +58,40 @@ export default function Header({ user, profileInfo }) {
       show: user,
     },
   ];
+  const [open, setOpen] = useState(false);
   return (
     <div className="shadow-md">
-      <header className="flex h-16 w-full shrink-0 items-center">
-        <Sheet>
+      <header className="flex h-16 w-full shrink-0 items-center justify-between">
+        <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             {/* meg kell adni  az asChild propot, hogy a SheetTrigger komponens gyermekei megjelenjenek   */}
-            <Button variant="outline" className="border-none lg:hidden">
-              <AlignJustify className="h-6 w-6" />
+            <Button
+              variant="outline"
+              className="border-none lg:hidden"
+              onClick={() => setOpen(true)}
+            >
+              <AlignJustify className="h-7 w-7" />
               <span className="sr-only">Toggle Navigation </span>
               {/* csak felolvasásra szolgáló szöveg */}
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <Link className="mr-6 relative -top-3" href="/">
-              <h3>KONDOR</h3>
+            <Link
+              className="mr-6 relative -top-2"
+              href="/"
+              onClick={() => setOpen(false)}
+            >
+              <img
+                src="/images/kondor-vector.png"
+                alt="logo"
+                className="h-5 "
+              />
             </Link>
-            <div className="grid gap-2 py-1">
-              <UserButton />
+            <div className="grid gap-2 relative -top-1">
               {menuItems.map((item) =>
                 item.show ? (
                   <Link
+                    onClick={() => setOpen(false)}
                     href={item.path}
                     key={item.label}
                     className="flex w-full items-center py-2 text-lg font-semibold"
@@ -125,6 +139,15 @@ export default function Header({ user, profileInfo }) {
             </div>
           </div>
         </nav>
+        <div className="pt-1 px-3 lg:hidden mt-0.5">
+          <UserButton
+            appearance={{
+              elements: {
+                userButtonAvatarBox: "w-7 h-7",
+              },
+            }}
+          />
+        </div>
       </header>
     </div>
   );

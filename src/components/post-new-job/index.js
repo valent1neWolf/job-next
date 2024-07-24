@@ -53,9 +53,10 @@ export default function PostNewJob({ profileInfo, user }) {
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="disabled:opacity-60 flex h-11 items-center justify-center px-5"
+        className="disabled:opacity-60 flex h-11 items-center bg-transparent rounded-full hover:bg-transparent justify-center p-2 ml-2 md:bg-black md:text-white md:rounded-md md:shadow-md md:font-semibold md:py-2 md:px-4 md:mt-0 md:ml-4 md:hover:bg-gray-800"
       >
-        Create Job
+        <span className="md:block hidden">Create Job</span>
+        <img className="md:hidden block w-6" src="/plus.svg" />
       </Button>
       <Dialog
         open={isOpen}
