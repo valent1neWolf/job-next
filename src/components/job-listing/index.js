@@ -22,6 +22,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { defaultJobAccordionFilters } from "@/utils";
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import React from "react";
+import { set } from "mongoose";
 
 export default function JobListing({
   profileInfo,
@@ -41,6 +44,7 @@ export default function JobListing({
   const [jobAccordionFilters, setJobAccordionFilters] = useState(
     defaultJobAccordionFilters
   );
+  const [drawerHeight, setDrawerHeight] = useState(0);
   const [showFiltersDrawer, setShowFiltersDrawer] = useState(false);
   //biztonság kedvéért mégegyszer majd átnézni ---
   const noJobsFound = choosenFilters.some((filter) => filter.content.length);
@@ -108,6 +112,18 @@ export default function JobListing({
     console.log(choosenFilters);
   }, [choosenFilters]);
 
+  //--------------------------------------------
+  //csak így lehet megszerezni a window objektumot client oldalon
+  React.useEffect(() => {
+    // window is accessible here.
+    console.log("window.innerHeight", window.innerHeight);
+  }, []);
+
+  useEffect(() => {
+    setDrawerHeight(window.innerHeight * 0.75);
+    console.log(drawerHeight, "drawerHeight");
+  }, [drawerHeight]);
+  //--------------------------------------------
   return (
     <div>
       <div className="mx-auto max-w-7xl">
@@ -209,66 +225,71 @@ export default function JobListing({
               open={showFiltersDrawer}
               onOpenChange={setShowFiltersDrawer}
             >
-              <DrawerContent className="max-h-fit overflow-y-scroll">
-                <DrawerHeader>
-                  <DrawerTitle>Set filters</DrawerTitle>
-                </DrawerHeader>
-                <DrawerFooter>
-                  <div>
-                    <div className="mx-auto w-11/12 my-3">
-                      {jobAccordionFilters.map((filter, index) => (
-                        <Accordion
-                          key={index}
-                          type="single"
-                          collapsible
-                          value={
-                            !openedFilters.includes(filter.trigger)
-                              ? filter.trigger
-                              : null
-                          }
-                        >
-                          <AccordionItem value={filter.trigger}>
-                            <AccordionTrigger
-                              className="hover:no-underline font-bold"
-                              onClick={() =>
-                                handleAccordionTrigger(filter.trigger)
-                              }
-                            >
-                              {filter.trigger}
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              {filter.content.map(
-                                (contentItem, contentIndex) => (
-                                  <div key={contentIndex}>
-                                    <Label
-                                      htmlFor={`${filter.trigger}-${contentIndex}`}
-                                      className="flex items-center py-1 text-lg"
-                                    >
-                                      <input
-                                        type="checkbox"
-                                        id={`${filter.trigger}-${contentIndex}`}
-                                        name={filter.trigger}
-                                        value={contentItem}
-                                        checked={choosenFilters.some(
-                                          (f) =>
-                                            f.trigger === filter.trigger &&
-                                            f.content.includes(contentItem)
-                                        )}
-                                        onChange={handleCheckboxChange}
-                                        className="mr-2 h-5 w-5"
-                                      />
-                                      {contentItem}
-                                    </Label>
-                                  </div>
-                                )
-                              )}
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      ))}
+              <DrawerContent>
+                <ScrollArea
+                  style={{ maxHeight: `${drawerHeight}px` }}
+                  className="overflow-auto"
+                >
+                  <DrawerHeader>
+                    <DrawerTitle>Set filters</DrawerTitle>
+                  </DrawerHeader>
+                  <DrawerFooter>
+                    <div>
+                      <div className="mx-auto w-11/12 my-3">
+                        {jobAccordionFilters.map((filter, index) => (
+                          <Accordion
+                            key={index}
+                            type="single"
+                            collapsible
+                            value={
+                              !openedFilters.includes(filter.trigger)
+                                ? filter.trigger
+                                : null
+                            }
+                          >
+                            <AccordionItem value={filter.trigger}>
+                              <AccordionTrigger
+                                className="hover:no-underline font-bold"
+                                onClick={() =>
+                                  handleAccordionTrigger(filter.trigger)
+                                }
+                              >
+                                {filter.trigger}
+                              </AccordionTrigger>
+                              <AccordionContent>
+                                {filter.content.map(
+                                  (contentItem, contentIndex) => (
+                                    <div key={contentIndex}>
+                                      <Label
+                                        htmlFor={`${filter.trigger}-${contentIndex}`}
+                                        className="flex items-center py-1 text-lg"
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          id={`${filter.trigger}-${contentIndex}`}
+                                          name={filter.trigger}
+                                          value={contentItem}
+                                          checked={choosenFilters.some(
+                                            (f) =>
+                                              f.trigger === filter.trigger &&
+                                              f.content.includes(contentItem)
+                                          )}
+                                          onChange={handleCheckboxChange}
+                                          className="mr-2 h-5 w-5"
+                                        />
+                                        {contentItem}
+                                      </Label>
+                                    </div>
+                                  )
+                                )}
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </DrawerFooter>
+                  </DrawerFooter>
+                </ScrollArea>
               </DrawerContent>
             </Drawer>
           </div>
