@@ -131,7 +131,9 @@ export default function JobListing({
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             {profileInfo?.role === "candidate"
               ? "Jobs for you"
-              : "Jobs Dashboard "}
+              : profileInfo?.role === "recruiter"
+              ? "Jobs Dashboard "
+              : null}
           </h1>
           <div className="flex items-center">
             <img
@@ -167,6 +169,7 @@ export default function JobListing({
               jobToDelete={jobToDelete}
               setJobToDelete={setJobToDelete}
               setJobs={setJobs}
+              profileInfo={profileInfo}
             />
           </div>
           <div className=" hidden bg-gray-200 mt-3 rounded-md md:block md:col-span-1 h-max">

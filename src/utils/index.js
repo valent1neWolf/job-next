@@ -212,3 +212,30 @@ export const defaultJobAccordionFilters = [
     content: ["0-1 years", "1-3 years", "3-5 years", "5+ years"],
   },
 ];
+
+export const costumeRecruiterOnBoardFormControls = [
+  {
+    name: "name",
+    label: "Name",
+    placeholder: "Enter your name",
+    componentType: "input",
+  },
+  {
+    name: "companySize",
+    label: "Company Size",
+    placeholder: "Enter your company size",
+    componentType: "input",
+  },
+  {
+    name: "companyRole",
+    label: "Company Role",
+    placeholder: "Enter your company's role",
+    componentType: "input",
+  },
+  {
+    name: "description",
+    label: "Company Description",
+    placeholder: "What does your company do?",
+    componentType: "textarea",
+  },
+];

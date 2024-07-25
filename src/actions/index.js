@@ -153,3 +153,20 @@ export async function fetchJobsCandidate(filters) {
     };
   }
 }
+
+export async function editProfileInfo(id, formData) {
+  await connectToDB();
+  try {
+    await Profile.findByIdAndUpdate(id, formData);
+    return {
+      success: true,
+      message: "Profile updated successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Profile update failed",
+    };
+  }
+}
