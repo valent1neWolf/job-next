@@ -5,6 +5,8 @@ import {
   fetchProfile,
   fetchJobsRecruiter,
   fetchJobsCandidate,
+  fetchApplicationsCandidate,
+  fetchApplicationsRecruiter,
 } from "@/actions";
 import { useEffect, useState, useMemo } from "react";
 import { defaultJobAccordionFilters } from "@/utils";
@@ -14,6 +16,7 @@ export default function JobsPage() {
   const { user } = useUser();
   const [profileInfo, setProfileInfo] = useState(null);
   const [jobs, setJobs] = useState([]);
+  const [applicationList, setApplicationList] = useState([]);
   const [choosenFilters, setChoosenFilters] = useState(
     defaultJobAccordionFilters.map((filter) => ({
       trigger: filter.trigger,
@@ -55,7 +58,22 @@ export default function JobsPage() {
       }
     };
 
+    const loadApplications = async () => {
+      if (profileInfo?.role === "candidate") {
+        const result = await fetchApplicationsCandidate(user?.id);
+        if (result.success) {
+          setApplicationList(result.data);
+        }
+      } else if (profileInfo?.role === "recruiter") {
+        const result = await fetchApplicationsRecruiter(user?.id);
+        if (result.success) {
+          setApplicationList(result.data);
+        }
+      }
+    };
+
     loadJobs();
+    loadApplications();
   }, [profileInfo, memoizedChoosenFilters]);
 
   console.log(jobs, "jobs");
@@ -69,6 +87,7 @@ export default function JobsPage() {
       choosenFilters={choosenFilters}
       setChoosenFilters={setChoosenFilters}
       setJobs={setJobs}
+      applicationList={applicationList}
     />
   );
 }

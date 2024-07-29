@@ -1,5 +1,11 @@
 "use client";
-import { fetchSingleJob, fetchProfile } from "@/actions";
+import {
+  fetchSingleJob,
+  fetchProfile,
+  fetchApplicationsCandidate,
+  fetchApplicationsRecruiter,
+  createJobApplication,
+} from "@/actions";
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
@@ -9,7 +15,11 @@ export default function Page({ params }) {
   const { user } = useUser();
   const [job, setJob] = useState(null);
   const [recruiterProfile, setRecruiterProfile] = useState(null);
+  const [applicationList, setApplicationList] = useState([]);
+  const [profileInfo, setProfileInfo] = useState(null);
   const router = useRouter();
+
+  //--------------------------------------------
   useEffect(() => {
     async function fetchData() {
       if (typeof user?.id !== "undefined") {
@@ -21,6 +31,20 @@ export default function Page({ params }) {
     fetchData();
   }, [user?.id]);
 
+  //--------------------------------------------
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (user?.id) {
+        const fetchedProfile = await fetchProfile(user.id);
+        setProfileInfo(fetchedProfile?.data);
+      }
+    };
+
+    loadProfile();
+  }, [user?.id]);
+
+  //--------------------------------------------
+  //hogy a recruiternek az adatiat mindenképp megszerezzük
   useEffect(() => {
     async function fetchRecruiterProfile() {
       if (job && job.recruiterId) {
@@ -34,6 +58,48 @@ export default function Page({ params }) {
   console.log(job, "job");
   console.log(recruiterProfile, "recruiter data");
 
+  //--------------------------------------------
+  useEffect(() => {
+    const loadApplications = async () => {
+      if (profileInfo?.role === "candidate") {
+        const result = await fetchApplicationsCandidate(user?.id);
+        if (result.success) {
+          setApplicationList(result.data);
+        }
+      } else if (profileInfo?.role === "recruiter") {
+        const result = await fetchApplicationsRecruiter(user?.id);
+        if (result.success) {
+          setApplicationList(result.data);
+        }
+      }
+    };
+
+    loadApplications();
+  }, [profileInfo]);
+
+  //--------------------------------------------
+  async function handleJobApply() {
+    if (profileInfo && profileInfo.role == "candidate" && job.recruiterId) {
+      const data = {
+        name: profileInfo.candidateInfo.name,
+        email: profileInfo.email,
+        jobId: job._id,
+        candidateUserId: profileInfo.userId,
+        recruiterUserId: job.recruiterId,
+        status: ["applied"],
+        jobAppliedDate: new Date().toISOString(),
+      };
+      const result = await createJobApplication(data, `/jobs/${job._id}`);
+      console.log(result);
+    } else {
+      console.log("data has not been loaded yet...");
+    }
+  }
+
+  console.log("applications", applicationList);
+  console.log(profileInfo, "profileInfo");
+  console.log(user, "user");
+  //--------------------------------------------
   return (
     <div className="grid grid-cols-1 gap-x-3 md:grid-cols-4">
       <div className="col-span-4 md:col-span-3">
@@ -66,7 +132,16 @@ export default function Page({ params }) {
             {recruiterProfile?.recruiterInfo?.companySize} employees work here
           </p>
           <div>
-            <Button className="bg-blue-700 text-lg   rounded-3xl py-1 mt-4 px-5 hover:bg-blue-600 mr-3">
+            <Button
+              className="bg-blue-700 text-lg   rounded-3xl py-1 mt-4 px-5 hover:bg-blue-600 mr-3"
+              onClick={handleJobApply}
+              disabled={
+                applicationList.findIndex((app) => app.jobId === job?._id) !==
+                -1
+                  ? true
+                  : false
+              }
+            >
               Apply
             </Button>
             <Button className="bg-white text-lg border border-blue-700 text-blue-700 rounded-3xl py-1 mt-4 px-5 hover:bg-blue-100">

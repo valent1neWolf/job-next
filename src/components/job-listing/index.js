@@ -33,6 +33,7 @@ export default function JobListing({
   choosenFilters,
   setChoosenFilters,
   setJobs,
+  applicationList,
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hovered, setHovered] = useState(null);
@@ -124,6 +125,9 @@ export default function JobListing({
     console.log(drawerHeight, "drawerHeight");
   }, [drawerHeight]);
   //--------------------------------------------
+
+  console.log("applicationList-job-listing", applicationList);
+  //--------------------------------------------
   return (
     <div>
       <div className="mx-auto max-w-7xl">
@@ -170,6 +174,7 @@ export default function JobListing({
               setJobToDelete={setJobToDelete}
               setJobs={setJobs}
               profileInfo={profileInfo}
+              applicationList={applicationList}
             />
           </div>
           <div className=" hidden bg-gray-200 mt-3 rounded-md md:block md:col-span-1 h-max">

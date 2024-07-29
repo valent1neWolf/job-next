@@ -20,6 +20,7 @@ export default function JobCards({
   setJobToDelete,
   setJobs,
   profileInfo,
+  applicationList,
 }) {
   // console.log("user at card", user?.id);
   const router = useRouter();
@@ -158,6 +159,24 @@ export default function JobCards({
                           <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
                         </svg>
                       )}
+                    </Button>
+                  )}
+                  {job?.recruiterId === user?.id && (
+                    <Button
+                      className="mt-2 px-6 bg-transparent text-gray-800 border-2 border-gray-800 hover:bg-gray-200 max-w-40"
+                      disabled={
+                        applicationList.filter((app) => app.jobId === job?._id)
+                          .length === 0
+                      }
+                    >
+                      {applicationList.filter((app) => app.jobId === job?._id)
+                        .length > 0
+                        ? `View ${
+                            applicationList.filter(
+                              (app) => app.jobId === job?._id
+                            ).length
+                          } applicants`
+                        : "No applicants yet"}
                     </Button>
                   )}
                 </div>

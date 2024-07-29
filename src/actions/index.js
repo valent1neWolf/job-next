@@ -4,6 +4,7 @@ import connectToDB from "@/database";
 import Profile from "@/models/profile";
 import Job from "@/models/job";
 import { revalidatePath } from "next/cache";
+import Application from "@/models/application";
 
 //create profile action
 export async function createProfile(formData, pathToRevalidate) {
@@ -170,3 +171,69 @@ export async function editProfileInfo(id, formData) {
     };
   }
 }
+
+//job application action
+export async function createJobApplication(data, pathToRevalidate) {
+  await connectToDB();
+  try {
+    const hasAlreadyApplied = await Application.findOne({
+      jobId: data.jobId,
+      candidateUserId: data.candidateUserId,
+    });
+    if (hasAlreadyApplied) {
+      return {
+        success: false,
+        message: "You have already applied for this job",
+        error: "Already applied",
+      };
+    } else {
+      await Application.create(data);
+      revalidatePath(pathToRevalidate);
+      return {
+        success: true,
+        message: "Application created successfully",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+}
+//fetch applications - candidate
+export async function fetchApplicationsCandidate(id) {
+  await connectToDB();
+  try {
+    const applications = await Application.find({ candidateUserId: id });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(applications)),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Application fetch failed",
+    };
+  }
+}
+//fetch applications - recruiter
+export async function fetchApplicationsRecruiter(id) {
+  await connectToDB();
+  try {
+    const applications = await Application.find({ recruiterUserId: id });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(applications)),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Application fetch failed",
+    };
+  }
+}
+//update application
