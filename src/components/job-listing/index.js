@@ -47,6 +47,7 @@ export default function JobListing({
   );
   const [drawerHeight, setDrawerHeight] = useState(0);
   const [showFiltersDrawer, setShowFiltersDrawer] = useState(false);
+
   //biztonság kedvéért mégegyszer majd átnézni ---
   const noJobsFound = choosenFilters.some((filter) => filter.content.length);
   console.log("noJobsFound", noJobsFound);

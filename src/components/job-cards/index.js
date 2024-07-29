@@ -1,5 +1,7 @@
+"use client";
+
 import { Button } from "../ui/button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,6 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteJob } from "@/actions";
 import { useRouter } from "next/navigation";
+import JobAplicants from "../job-aplicants";
+
 export default function JobCards({
   jobs,
   hovered,
@@ -22,7 +26,10 @@ export default function JobCards({
   profileInfo,
   applicationList,
 }) {
-  // console.log("user at card", user?.id);
+  const [showApplicantsDrawer, setShowApplicantsDrawer] = useState(false);
+  const [currentCandidateDetails, setCurrentCandidateDetails] = useState(null);
+  const [showCurrentCandidateDetails, setShowCurrentCandidateDetails] =
+    useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -187,6 +194,18 @@ export default function JobCards({
                 </div>
               </div>
             </div>
+            <JobAplicants
+              showApplicantsDrawer={showApplicantsDrawer}
+              setShowApplicantsDrawer={setShowApplicantsDrawer}
+              showCurrentCandidateDetails={showCurrentCandidateDetails}
+              setShowCurrentCandidateDetails={setShowCurrentCandidateDetails}
+              currentCandidateDetails={currentCandidateDetails}
+              setCurrentCandidateDetails={setCurrentCandidateDetails}
+              job={job}
+              applicationList={applicationList.filter(
+                (app) => app.jobId === job._id
+              )}
+            />
           </div>
         ))
       ) : noJobsFound ? (

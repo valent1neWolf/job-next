@@ -15,7 +15,7 @@ import { redirect } from "next/navigation";
 
 const supabaseClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_API_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
 export default function EditButton({ profileInfo, user, formControls }) {
@@ -37,7 +37,7 @@ export default function EditButton({ profileInfo, user, formControls }) {
 
   async function handleUploadedPdfToSupabase() {
     const { data, error } = await supabaseClient.storage
-      .from("job-board") // bucket name
+      .from("job-board-public") // bucket name
       .upload(`public/${user?.primaryEmailAddress?.emailAddress}`, file, {
         cacheControl: "3600", // 1 hour
         upsert: true, // Update the file if it already exists
