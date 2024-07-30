@@ -236,4 +236,23 @@ export async function fetchApplicationsRecruiter(id) {
     };
   }
 }
+
+//get candidate info for application
+export async function getCandidateDetailsByIDAction(id) {
+  await connectToDB();
+  try {
+    const profile = await Profile.findOne({ userId: id });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(profile)),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Profile fetch failed",
+    };
+  }
+}
+
 //update application

@@ -25,11 +25,13 @@ export default function JobCards({
   setJobs,
   profileInfo,
   applicationList,
+  drawerHeight,
 }) {
   const [showApplicantsDrawer, setShowApplicantsDrawer] = useState(false);
   const [currentCandidateDetails, setCurrentCandidateDetails] = useState(null);
   const [showCurrentCandidateDetails, setShowCurrentCandidateDetails] =
     useState(false);
+  const [selectedJobId, setSelectedJobId] = useState(null); //pluszba még létre kell hozni egy state-et, ami tárolja a kiválasztott álláshirdetés ID-jét, hogy csak annak az értékét küldje tovább amire a felasznló rákattintott
   const router = useRouter();
 
   useEffect(() => {
@@ -133,7 +135,7 @@ export default function JobCards({
               <div className="flex items-baseline justify-between">
                 <div className="flex items-center gap-3">
                   <Button
-                    className="mt-2 px-6"
+                    className="mt-2 px-4"
                     onClick={() => window.open(`/jobs/${job._id}`)}
                   >
                     View <span className="hidden md:inline">&#8203; Job</span>
@@ -170,20 +172,34 @@ export default function JobCards({
                   )}
                   {job?.recruiterId === user?.id && (
                     <Button
-                      className="mt-2 px-6 bg-transparent text-gray-800 border-2 border-gray-800 hover:bg-gray-200 max-w-40"
+                      onClick={() => {
+                        setShowApplicantsDrawer(true);
+                        setSelectedJobId(job._id); // kattintásnál beállítjuk a kiválasztott álláshirdetés ID-jét
+                      }}
+                      className="mt-2 px-4 bg-transparent text-gray-800 border-2 border-gray-800 hover:bg-gray-200 max-w-40"
                       disabled={
                         applicationList.filter((app) => app.jobId === job?._id)
                           .length === 0
                       }
                     >
                       {applicationList.filter((app) => app.jobId === job?._id)
-                        .length > 0
-                        ? `View ${
+                        .length > 0 ? (
+                        <p>
+                          <span className="hidden md:inline">View </span>
+                          {
                             applicationList.filter(
                               (app) => app.jobId === job?._id
                             ).length
-                          } applicants`
-                        : "No applicants yet"}
+                          }{" "}
+                          applicants
+                        </p>
+                      ) : (
+                        <p>
+                          {" "}
+                          No applicants{" "}
+                          <span className="hidden md:inline">yet</span>
+                        </p>
+                      )}
                     </Button>
                   )}
                 </div>
@@ -194,18 +210,21 @@ export default function JobCards({
                 </div>
               </div>
             </div>
-            <JobAplicants
-              showApplicantsDrawer={showApplicantsDrawer}
-              setShowApplicantsDrawer={setShowApplicantsDrawer}
-              showCurrentCandidateDetails={showCurrentCandidateDetails}
-              setShowCurrentCandidateDetails={setShowCurrentCandidateDetails}
-              currentCandidateDetails={currentCandidateDetails}
-              setCurrentCandidateDetails={setCurrentCandidateDetails}
-              job={job}
-              applicationList={applicationList.filter(
-                (app) => app.jobId === job._id
-              )}
-            />
+            {showApplicantsDrawer && selectedJobId === job._id && (
+              <JobAplicants
+                showApplicantsDrawer={showApplicantsDrawer}
+                setShowApplicantsDrawer={setShowApplicantsDrawer}
+                showCurrentCandidateDetails={showCurrentCandidateDetails}
+                setShowCurrentCandidateDetails={setShowCurrentCandidateDetails}
+                currentCandidateDetails={currentCandidateDetails}
+                setCurrentCandidateDetails={setCurrentCandidateDetails}
+                job={job}
+                drawerHeight={drawerHeight}
+                applicationList={applicationList.filter(
+                  (app) => app.jobId === job._id
+                )}
+              />
+            )}
           </div>
         ))
       ) : noJobsFound ? (

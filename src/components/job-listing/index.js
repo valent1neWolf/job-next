@@ -56,7 +56,7 @@ export default function JobListing({
     if (!noJobsFound && jobs.length > 0) {
       const updatedLocations = [...new Set(jobs.map((job) => job.location))];
       setLocations(updatedLocations);
-      console.log(updatedLocations, "updatedLocations");
+      // console.log(updatedLocations, "updatedLocations");
 
       const updatedFilters = jobAccordionFilters.map((filter) => {
         if (filter.trigger === "Location") {
@@ -123,7 +123,7 @@ export default function JobListing({
 
   useEffect(() => {
     setDrawerHeight(window.innerHeight * 0.75);
-    console.log(drawerHeight, "drawerHeight");
+    // console.log(drawerHeight, "drawerHeight");
   }, [drawerHeight]);
   //--------------------------------------------
 
@@ -176,6 +176,7 @@ export default function JobListing({
               setJobs={setJobs}
               profileInfo={profileInfo}
               applicationList={applicationList}
+              drawerHeight={drawerHeight}
             />
           </div>
           <div className=" hidden bg-gray-200 mt-3 rounded-md md:block md:col-span-1 h-max">
