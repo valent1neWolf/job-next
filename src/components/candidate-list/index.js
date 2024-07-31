@@ -10,8 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getCandidateDetailsByIDAction } from "@/actions";
+import {
+  getCandidateDetailsByIDAction,
+  jobAplicationStatusAction,
+} from "@/actions";
 import { Label } from "@/components/ui/label";
+import "dotenv/config";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export default function CandidateList({
   currentCandidateDetails,
@@ -41,6 +51,43 @@ export default function CandidateList({
       setCurrentCandidateDetails(null);
     }
   }, [showCurrentCandidateDetails]);
+
+  //------------------------------------------
+  function handleViewResume() {
+    const { data } = supabaseClient.storage
+      .from("job-board-public")
+      .getPublicUrl(currentCandidateDetails?.candidateInfo?.resume);
+
+    console.log(currentCandidateDetails?.candidateInfo?.resume, "resume");
+    const a = document.createElement("a");
+    a.href = data?.publicUrl;
+    a.setAttribute("download", "Resume.pdf");
+    a.setAttribute("target", "_blank");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  //------------------------------------------
+  async function handleApplicationUpdate(status) {
+    let copyOfApplicationList = [...applicationList];
+    const indexOfCurrentApplication = copyOfApplicationList.findIndex(
+      (application) =>
+        application?.candidateUserId === currentCandidateDetails?.userId
+    );
+    console.log(indexOfCurrentApplication, "indexOfCurrentApplication");
+    // await jobAplicationStatusAction(data, "/jobs");
+    const jobApplicantToUpdate = {
+      ...copyOfApplicationList[indexOfCurrentApplication],
+      status:
+        copyOfApplicationList[indexOfCurrentApplication].status.concat(status),
+    };
+    console.log(jobApplicantToUpdate, "jobApplicantToUpdate");
+    const data = await jobAplicationStatusAction(jobApplicantToUpdate, `/jobs`);
+    await setShowCurrentCandidateDetails(false);
+    console.log(data, "data");
+  }
+
   return (
     <Fragment>
       <div className="grid grid-cols-1 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3">
@@ -100,7 +147,7 @@ export default function CandidateList({
             <Label htmlFor="skills" className="font-semibold ">
               Skills
             </Label>
-            <div id="skills" className="flex  items-center mt-2">
+            <div id="skills" className="flex flex-wrap items-center mt-2">
               {currentCandidateDetails?.candidateInfo?.skills
                 .split(",")
                 .map((skillItem) => (
@@ -117,8 +164,10 @@ export default function CandidateList({
             <Label htmlFor="resume" className="font-semibold ">
               Resume
             </Label>
-            <p id="resume">
-              {currentCandidateDetails?.candidateInfo?.resume || "N/A"}
+            <p className="mt-1">
+              <button onClick={() => handleViewResume()} id="resume">
+                <a className="underline">View Resume</a>
+              </button>
             </p>
           </div>
           <div className="mt-3">
@@ -146,11 +195,59 @@ export default function CandidateList({
             </p>
           </div>
           <div className="flex justify-end space-x-2">
-            <Button className="bg-trasnsparent border-2 text-red-600 border-red-600 hover:bg-red-600 hover:text-white hover:shadow-md font-semibold">
-              Reject
+            <Button
+              onClick={() => handleApplicationUpdate("rejected")}
+              className="disabled: opacity-65 bg-trasnsparent border-2 text-red-600 border-red-600 hover:bg-red-600 hover:text-white hover:shadow-md font-semibold"
+              disabled={
+                applicationList
+                  ?.find(
+                    (item) =>
+                      item.candidateUserId === currentCandidateDetails?.userId
+                  )
+                  ?.status.includes("selected") ||
+                applicationList
+                  ?.find(
+                    (item) =>
+                      item.candidateUserId === currentCandidateDetails?.userId
+                  )
+                  ?.status.includes("rejected")
+              }
+            >
+              {applicationList
+                .find(
+                  (item) =>
+                    item.candidateUserId === currentCandidateDetails?.userId
+                )
+                ?.status.includes("rejected")
+                ? "Rejected"
+                : "Reject"}
             </Button>
-            <Button className="bg-trasnsparent border-2 text-green-600 border-green-600 hover:bg-green-600 hover:text-white hover:shadow-md font-semibold">
-              Select
+            <Button
+              onClick={() => handleApplicationUpdate("selected")}
+              className="disabled: opacity-65 bg-trasnsparent border-2 text-green-600 border-green-600 hover:bg-green-600 hover:text-white hover:shadow-md font-semibold"
+              disabled={
+                applicationList
+                  ?.find(
+                    (item) =>
+                      item.candidateUserId === currentCandidateDetails?.userId
+                  )
+                  ?.status.includes("selected") ||
+                applicationList
+                  ?.find(
+                    (item) =>
+                      item.candidateUserId === currentCandidateDetails?.userId
+                  )
+                  ?.status.includes("rejected")
+              }
+            >
+              {applicationList
+                .find(
+                  (item) =>
+                    item.candidateUserId === currentCandidateDetails?.userId
+                )
+                ?.status.includes("selected")
+                ? "Selected"
+                : "Select"}
             </Button>
           </div>
         </DialogContent>

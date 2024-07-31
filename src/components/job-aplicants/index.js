@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import CandidateList from "../candidate-list";
+import "../component_style.css";
 
 export default function JobAplicants({
   showApplicantsDrawer,
@@ -34,7 +35,7 @@ export default function JobAplicants({
       <DrawerContent>
         <ScrollArea
           style={{ maxHeight: `${drawerHeight}px` }}
-          className="overflow-auto"
+          className="overflow-scroll"
         >
           <DrawerHeader>
             <DrawerTitle>Applicants</DrawerTitle>

@@ -256,3 +256,47 @@ export async function getCandidateDetailsByIDAction(id) {
 }
 
 //update application
+export async function jobAplicationStatusAction(data, pathToRevalidate) {
+  await connectToDB();
+  const {
+    recruiterUserId,
+    name,
+    email,
+    candidateUserId,
+    status,
+    jobId,
+    jobAppliedDate,
+    _id,
+  } = data;
+  try {
+    const result = await Application.findOneAndUpdate(
+      {
+        _id: _id,
+      },
+      {
+        recruiterUserId,
+        name,
+        email,
+        candidateUserId,
+        status,
+        jobId,
+        jobAppliedDate,
+      },
+      {
+        new: true,
+      }
+    );
+    revalidatePath(pathToRevalidate);
+    return {
+      success: true,
+      message: "Application updated successfully",
+      data: JSON.parse(JSON.stringify(result)),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Application update failed",
+    };
+  }
+}
