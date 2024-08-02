@@ -239,3 +239,44 @@ export const costumeRecruiterOnBoardFormControls = [
     componentType: "textarea",
   },
 ];
+
+//------------------------------------------------------------
+export function handleCreationTime(time) {
+  if (!time) return;
+
+  const creationDate = new Date(time);
+  const currentDate = new Date();
+  const yesterday = new Date(); //muszáj megadni, hogy aztán tudjuk módosítani
+  yesterday.setDate(currentDate.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
+
+  const creationDateMidnight = new Date(creationDate); //mivel napokat hasonlítunk össze ezért kell, hogy 0:00-ra állítsuk az időt
+  creationDateMidnight.setHours(0, 0, 0, 0);
+
+  // ma volt létrehozva
+  if (creationDateMidnight.getTime() === new Date().setHours(0, 0, 0, 0)) {
+    return `Today ${creationDate.toLocaleTimeString("en-UK", {
+      hour: "2-digit", //2-digit: 0-23-as formátumban jeleníti meg az órát
+      minute: "2-digit", //2-digit: 0-59-es formátumban jeleníti meg a percet
+    })}`;
+  }
+  // tegnap volt létrehozva
+  else if (creationDateMidnight.getTime() === yesterday.getTime()) {
+    return `Yesterday ${creationDate.toLocaleTimeString("en-UK", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+  }
+  // legalább tegnap előtt volt létrehozva
+  else {
+    return creationDate.toLocaleDateString("en-UK", {
+      month: "long",
+      day: "numeric",
+    });
+  }
+}
+
+//------------------------------------------------------------
+export function capitalize(s) {
+  return s[0].toUpperCase() + s.slice(1);
+}

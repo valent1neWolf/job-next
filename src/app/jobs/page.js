@@ -7,6 +7,7 @@ import {
   fetchJobsCandidate,
   fetchApplicationsCandidate,
   fetchApplicationsRecruiter,
+  fetchBookmarks,
 } from "@/actions";
 import { useEffect, useState, useMemo } from "react";
 import { defaultJobAccordionFilters } from "@/utils";
@@ -24,7 +25,9 @@ export default function JobsPage() {
       content: [],
     }))
   );
-
+  const [bookmarkList, setBookmarkList] = useState([]);
+  const [jobToBookmark, setJobToBookmark] = useState(null);
+  console.log(bookmarkList, "bookmarkList");
   //--------------------------------------------
   useEffect(() => {
     const loadProfile = async () => {
@@ -72,11 +75,22 @@ export default function JobsPage() {
       }
     };
 
+    const loadBookmarkList = async () => {
+      if (user?.id) {
+        const result = await fetchBookmarks(user?.id);
+        if (result.success) {
+          console.log(result.message, "result.message");
+          setBookmarkList(result.data);
+        }
+      }
+    };
+
     loadJobs();
     loadApplications();
+    loadBookmarkList();
   }, [profileInfo, memoizedChoosenFilters]);
 
-  console.log(jobs, "jobs");
+  // console.log(jobs, "jobs");
 
   //--------------------------------------------
   return (
@@ -88,6 +102,10 @@ export default function JobsPage() {
       setChoosenFilters={setChoosenFilters}
       setJobs={setJobs}
       applicationList={applicationList}
+      bookmarkList={bookmarkList}
+      setBookmarkList={setBookmarkList}
+      jobToBookmark={jobToBookmark}
+      setJobToBookmark={setJobToBookmark}
     />
   );
 }

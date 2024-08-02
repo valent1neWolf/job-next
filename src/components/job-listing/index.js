@@ -34,6 +34,10 @@ export default function JobListing({
   setChoosenFilters,
   setJobs,
   applicationList,
+  bookmarkList,
+  setBookmarkList,
+  jobToBookmark,
+  setJobToBookmark,
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hovered, setHovered] = useState(null);
@@ -50,7 +54,7 @@ export default function JobListing({
 
   //biztonság kedvéért mégegyszer majd átnézni ---
   const noJobsFound = choosenFilters.some((filter) => filter.content.length);
-  console.log("noJobsFound", noJobsFound);
+  // console.log("noJobsFound", noJobsFound);
 
   useEffect(() => {
     if (!noJobsFound && jobs.length > 0) {
@@ -127,7 +131,6 @@ export default function JobListing({
   }, [drawerHeight]);
   //--------------------------------------------
 
-  console.log("applicationList-job-listing", applicationList);
   //--------------------------------------------
   return (
     <div>
@@ -177,6 +180,10 @@ export default function JobListing({
               profileInfo={profileInfo}
               applicationList={applicationList}
               drawerHeight={drawerHeight}
+              bookmarkList={bookmarkList}
+              setBookmarkList={setBookmarkList}
+              jobToBookmark={jobToBookmark}
+              setJobToBookmark={setJobToBookmark}
             />
           </div>
           <div className=" hidden bg-gray-200 mt-3 rounded-md md:block md:col-span-1 h-max">

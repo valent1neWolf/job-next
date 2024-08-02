@@ -147,12 +147,15 @@ export default function CandidateList({
             <Label htmlFor="skills" className="font-semibold ">
               Skills
             </Label>
-            <div id="skills" className="flex flex-wrap items-center mt-2">
+            <div
+              id="skills"
+              className="flex flex-wrap items-center mt-2  space-y-2"
+            >
               {currentCandidateDetails?.candidateInfo?.skills
                 .split(",")
                 .map((skillItem) => (
                   <div
-                    className="p-2 bg-gray-800 w-max mr-2 rounded-sm "
+                    className="p-2 bg-gray-800 w-max mr-2 mt-2  rounded-sm "
                     key={skillItem}
                   >
                     <span className="text-white">{skillItem}</span>
@@ -197,7 +200,7 @@ export default function CandidateList({
           <div className="flex justify-end space-x-2">
             <Button
               onClick={() => handleApplicationUpdate("rejected")}
-              className="disabled: opacity-65 bg-trasnsparent border-2 text-red-600 border-red-600 hover:bg-red-600 hover:text-white hover:shadow-md font-semibold"
+              className="disabled:opacity-65 bg-trasnsparent border-2 text-red-600 border-red-600 hover:bg-red-600 hover:text-white hover:shadow-md font-semibold"
               disabled={
                 applicationList
                   ?.find(
@@ -224,7 +227,7 @@ export default function CandidateList({
             </Button>
             <Button
               onClick={() => handleApplicationUpdate("selected")}
-              className="disabled: opacity-65 bg-trasnsparent border-2 text-green-600 border-green-600 hover:bg-green-600 hover:text-white hover:shadow-md font-semibold"
+              className="disabled:opacity-65 bg-trasnsparent border-2 text-green-600 border-green-600 hover:bg-green-600 hover:text-white hover:shadow-md font-semibold"
               disabled={
                 applicationList
                   ?.find(

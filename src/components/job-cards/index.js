@@ -8,9 +8,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteJob } from "@/actions";
+import { deleteJob, bookmarkJobAction, deleteBookmark } from "@/actions";
 import { useRouter } from "next/navigation";
 import JobAplicants from "../job-aplicants";
+import { handleCreationTime, capitalize } from "@/utils";
 
 export default function JobCards({
   jobs,
@@ -26,6 +27,10 @@ export default function JobCards({
   profileInfo,
   applicationList,
   drawerHeight,
+  bookmarkList,
+  setBookmarkList,
+  jobToBookmark,
+  setJobToBookmark,
 }) {
   const [showApplicantsDrawer, setShowApplicantsDrawer] = useState(false);
   const [currentCandidateDetails, setCurrentCandidateDetails] = useState(null);
@@ -33,52 +38,18 @@ export default function JobCards({
     useState(false);
   const [selectedJobId, setSelectedJobId] = useState(null); //pluszba még létre kell hozni egy state-et, ami tárolja a kiválasztott álláshirdetés ID-jét, hogy csak annak az értékét küldje tovább amire a felasznló rákattintott
   const router = useRouter();
-
+  //----------------------------------------------------------
   useEffect(() => {
     setIsLoading(false);
   }, [jobs]);
-
+  // console.log(user, "user");
+  // console.log(bookmarkList, "bookmarkList in job-cards");
+  //----------------------------------------------------------
   const noJobsFound = choosenFilters.some((filter) => filter.content.length);
   // console.log(noJobsFound, "noJobsFound");
+  //----------------------------------------------------------
 
-  function capitalize(s) {
-    return s[0].toUpperCase() + s.slice(1);
-  }
-
-  function handleCreationTime(time) {
-    if (!time) return;
-
-    const creationDate = new Date(time);
-    const currentDate = new Date();
-    const yesterday = new Date(); //muszáj megadni, hogy aztán tudjuk módosítani
-    yesterday.setDate(currentDate.getDate() - 1);
-    yesterday.setHours(0, 0, 0, 0);
-
-    const creationDateMidnight = new Date(creationDate); //mivel napokat hasonlítunk össze ezért kell, hogy 0:00-ra állítsuk az időt
-    creationDateMidnight.setHours(0, 0, 0, 0);
-
-    // ma volt létrehozva
-    if (creationDateMidnight.getTime() === new Date().setHours(0, 0, 0, 0)) {
-      return `Today ${creationDate.toLocaleTimeString("en-UK", {
-        hour: "2-digit", //2-digit: 0-23-as formátumban jeleníti meg az órát
-        minute: "2-digit", //2-digit: 0-59-es formátumban jeleníti meg a percet
-      })}`;
-    }
-    // tegnap volt létrehozva
-    else if (creationDateMidnight.getTime() === yesterday.getTime()) {
-      return `Yesterday ${creationDate.toLocaleTimeString("en-UK", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
-    }
-    // legalább tegnap előtt volt létrehozva
-    else {
-      return creationDate.toLocaleDateString("en-UK", {
-        month: "long",
-        day: "numeric",
-      });
-    }
-  }
+  //----------------------------------------------------------
 
   async function deleteJobAction(id) {
     console.log("deleting job", id);
@@ -86,7 +57,49 @@ export default function JobCards({
     // lehet, hogy ezt nem szabadna csinálni, de legalább látszatra megoldja a problémát (más megoldás nem jut eszembe)
     setJobs((currentJobs) => currentJobs.filter((job) => job._id !== id));
   }
+  //----------------------------------------------------------
+  async function handleBookmarkAction(job) {
+    console.log("bookmarking job", job);
+    if (profileInfo?.role === "candidate") {
+      const candidateUserId = user.id || profileInfo.userId;
+      const existingBookmark = bookmarkList.find(
+        (bookmark) =>
+          bookmark.jobId === job._id &&
+          bookmark.candidateUserId === candidateUserId
+      );
+      console.log("existingBookmark", existingBookmark);
+      if (existingBookmark) {
+        const result = await deleteBookmark(existingBookmark._id);
+        if (result.success) {
+          setBookmarkList((currentBookmarks) =>
+            currentBookmarks.filter((bookmark) => bookmark.jobId !== job._id)
+          );
+        }
+      } else {
+        console.log("User object:", user); // Log user object
+        console.log("Profile Info:", profileInfo); // Log profile info
 
+        const data = {
+          name: profileInfo.candidateInfo.name,
+          email: profileInfo.email,
+          candidateUserId,
+          jobId: job._id,
+          jobSaveDate: new Date().toISOString(),
+        };
+
+        console.log("Data to be sent:", data); // Log data object
+
+        const result = await bookmarkJobAction(data);
+        if (result.success) {
+          setBookmarkList((currentBookmarks) => [
+            ...currentBookmarks,
+            result.data,
+          ]);
+        }
+        console.log("Result from bookmarkJobAction:", result); // Log result
+      }
+    }
+  }
   return (
     <div className={`${isLoading ? "hidden" : ""}`}>
       {jobs && jobs.length > 0 && !isLoading ? (
@@ -132,7 +145,7 @@ export default function JobCards({
                 <img src="/location.svg" alt="location-svg" className="mr-2" />
                 {job?.location}
               </p>
-              <div className="flex items-baseline justify-between">
+              <div className="flex items-end justify-between">
                 <div className="flex items-center gap-3">
                   <Button
                     className="mt-2 px-4"
@@ -142,31 +155,20 @@ export default function JobCards({
                   </Button>
                   {profileInfo?.role === "candidate" && (
                     <Button
-                      className="mt-2 bg-transparent border border-black"
+                      className={`mt-2 bg-transparent border border-black ${
+                        bookmarkList.find((item) => item.jobId === job?._id)
+                          ? "bg-black"
+                          : "bg-transparent"
+                      }`}
                       onMouseEnter={() => setHovered(job._id)}
                       onMouseLeave={() => setHovered(null)}
+                      onClick={() => handleBookmarkAction(job)}
                     >
-                      {hovered === job?._id ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2" />
-                        </svg>
+                      {hovered === job?._id ||
+                      bookmarkList.find((item) => item.jobId === job?._id) ? (
+                        <img src="/saved.svg" alt="bookmarked" />
                       ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          className="text-black "
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z" />
-                        </svg>
+                        <img src="/not-saved.svg" alt="not bookmark" />
                       )}
                     </Button>
                   )}

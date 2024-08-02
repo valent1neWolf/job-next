@@ -5,6 +5,7 @@ import Profile from "@/models/profile";
 import Job from "@/models/job";
 import { revalidatePath } from "next/cache";
 import Application from "@/models/application";
+import Bookmark from "@/models/bookmark";
 
 //create profile action
 export async function createProfile(formData, pathToRevalidate) {
@@ -297,6 +298,90 @@ export async function jobAplicationStatusAction(data, pathToRevalidate) {
     return {
       success: false,
       message: "Application update failed",
+    };
+  }
+}
+
+//bookmark job
+export async function bookmarkJobAction(data) {
+  await connectToDB();
+  const { candidateUserId, jobId, jobSaveDate, name, email } = data;
+
+  try {
+    const result = await Bookmark.create({
+      candidateUserId,
+      jobId,
+      jobSaveDate,
+      name,
+      email,
+    });
+
+    return {
+      success: true,
+      message: candidateUserId,
+      data: JSON.parse(JSON.stringify(result)),
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+}
+
+//fetch bookmarks
+export async function fetchBookmarks(id) {
+  await connectToDB();
+  try {
+    const bookmarks = await Bookmark.find({ candidateUserId: id });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(bookmarks)),
+      message: "Bookmarks fetched successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Bookmarks fetch failed",
+    };
+  }
+}
+
+//delete bookmark
+export async function deleteBookmark(id) {
+  await connectToDB();
+  try {
+    await Bookmark.findByIdAndDelete(id);
+    return {
+      success: true,
+      message: "Bookmark deleted successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Bookmark deletion failed",
+    };
+  }
+}
+
+//fetch bookmarked jobs
+export async function fetchBookmarkedJobs(ids) {
+  await connectToDB();
+  try {
+    const bookmarkedJobs = await Job.find({ _id: { $in: ids } });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(bookmarkedJobs)),
+      message: "Bookmarks fetched successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Bookmarks fetch failed",
     };
   }
 }
