@@ -385,3 +385,22 @@ export async function fetchBookmarkedJobs(ids) {
     };
   }
 }
+
+//fetch jobs by id
+export async function fetchJobsById(ids) {
+  await connectToDB();
+  try {
+    const jobs = await Job.find({ _id: { $in: ids } });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(jobs)),
+      message: "Jobs fetched successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Jobs fetch failed",
+    };
+  }
+}

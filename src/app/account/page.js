@@ -6,6 +6,8 @@ import {
   fetchBookmarks,
   fetchBookmarkedJobs,
   deleteBookmark,
+  fetchApplicationsCandidate,
+  fetchJobsById,
 } from "@/actions";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
@@ -18,12 +20,15 @@ import { Label } from "@/components/ui/label";
 import EditButton from "@/components/profile-edit";
 import { Button } from "@/components/ui/button";
 import { handleCreationTime, capitalize } from "@/utils";
+import CardForApplied from "@/components/card-for-applied";
 
 export default function Page() {
   const { user } = useUser();
   const [profileInfo, setProfileInfo] = useState(null);
   const [bookmarkList, setBookmarkList] = useState([]);
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
+  const [applications, setApplications] = useState([]);
+  const [applicationJobs, setApplicationJobs] = useState([]);
   //--------------------------------------------
   useEffect(() => {
     const loadProfile = async () => {
@@ -36,9 +41,11 @@ export default function Page() {
 
     loadProfile();
   }, [user?.id, profileInfo]);
-  console.log("profileInfo", profileInfo);
-  console.log("user", user);
-  console.log("bookmarkList", bookmarkList);
+  // console.log("profileInfo", profileInfo);
+  // console.log("user", user);
+  // console.log("bookmarkList", bookmarkList);
+  console.log("applications", applications);
+
   //--------------------------------------------
   function changeProlifePicture() {
     const fileInput = document.createElement("input");
@@ -86,7 +93,7 @@ export default function Page() {
       const data = bookmarkList.map((bookmark) => bookmark.jobId);
       console.log("data", data);
       const fetchedBookmarkedJobs = await fetchBookmarkedJobs(data);
-      setBookmarkedJobs(fetchedBookmarkedJobs?.data);
+      setBookmarkedJobs(fetchedBookmarkedJobs?.data.reverse());
     };
     loadBookmarkedJobs();
   }, [bookmarkList]);
@@ -112,6 +119,33 @@ export default function Page() {
       }
     }
   }
+  //--------------------------------------------
+  useEffect(() => {
+    if (profileInfo?.role === "candidate" && user.id) {
+      const loadApplications = async () => {
+        const fetchedApplications = await fetchApplicationsCandidate(user.id);
+        setApplications(fetchedApplications?.data.reverse());
+      };
+
+      loadApplications();
+    }
+  }, [profileInfo]);
+  //--------------------------------------------
+  useEffect(() => {
+    if (profileInfo?.role === "candidate" && user.id) {
+      const loadApplicationJobs = async () => {
+        const data = applications.map((application) => application.jobId);
+        console.log("data", data);
+
+        const fetchedApplicationJobs = await fetchJobsById(data);
+        setApplicationJobs(fetchedApplicationJobs?.data);
+      };
+
+      loadApplicationJobs();
+    }
+  }, [applications]);
+  console.log("applicationJobs", applicationJobs);
+
   //--------------------------------------------
   return (
     <div>
@@ -229,7 +263,59 @@ export default function Page() {
           // Only show tabs if user is a candidate
           profileInfo?.role === "candidate" && (
             <TabsContent value="applied">
-              Jobs that you have applied for come here.
+              <h1 className="text-xl font-semibold my-2">Accepted</h1>
+              {applications && applications.length > 0 ? (
+                applications
+                  .filter((application) =>
+                    application.status.includes("selected")
+                  )
+                  .map((application) => (
+                    <CardForApplied
+                      key={application.id}
+                      job={applicationJobs.find(
+                        (job) => job._id === application.jobId
+                      )}
+                    />
+                  ))
+              ) : (
+                <h1>No applications</h1>
+              )}
+              <h1 className="text-xl font-semibold my-2">Rejected</h1>
+              {applications && applications.length > 0 ? (
+                applications
+                  .filter((application) =>
+                    application.status.includes("rejected")
+                  )
+                  .map((application) => (
+                    <CardForApplied
+                      key={application.id}
+                      job={applicationJobs.find(
+                        (job) => job._id === application.jobId
+                      )}
+                    />
+                  ))
+              ) : (
+                <h1>No applications</h1>
+              )}
+              <h1 className="text-xl font-semibold my-2">Still pending</h1>
+              {applications && applications.length > 0 ? (
+                applications
+                  .filter(
+                    (application) =>
+                      !application.status.includes("selected") &&
+                      !application.status.includes("rejected")
+                  )
+                  .map((application) => (
+                    <CardForApplied
+                      key={application.id}
+                      job={applicationJobs.find(
+                        (job) => job._id === application.jobId
+                      )}
+                    />
+                  ))
+              ) : (
+                <h1>No applications</h1>
+              )}
             </TabsContent>
           )
         }

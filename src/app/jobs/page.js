@@ -54,10 +54,10 @@ export default function JobsPage() {
           user?.id,
           memoizedChoosenFilters
         );
-        setJobs(fetchedJobs?.data);
+        setJobs(fetchedJobs?.data.reverse());
       } else if (profileInfo?.role === "candidate") {
         const fetchedJobs = await fetchJobsCandidate(memoizedChoosenFilters);
-        setJobs(fetchedJobs?.data);
+        setJobs(fetchedJobs?.data.reverse());
       }
     };
 
