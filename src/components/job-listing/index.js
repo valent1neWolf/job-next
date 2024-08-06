@@ -25,6 +25,7 @@ import { defaultJobAccordionFilters } from "@/utils";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import React from "react";
 import { set } from "mongoose";
+import { fetchAllJobLocations } from "@/actions";
 
 export default function JobListing({
   profileInfo,
@@ -43,9 +44,7 @@ export default function JobListing({
   const [hovered, setHovered] = useState(null);
   const [jobToDelete, setJobToDelete] = useState(null);
   const [openedFilters, setOpenedFilters] = useState([]);
-  const [locations, setLocations] = useState([
-    ...new Set(jobs.map((job) => job.location)),
-  ]); //ez lehet feleslegesen maradt itt
+  const [locations, setLocations] = useState([]); //ez lehet feleslegesen maradt itt
   const [jobAccordionFilters, setJobAccordionFilters] = useState(
     defaultJobAccordionFilters
   );
@@ -57,21 +56,45 @@ export default function JobListing({
   // console.log("noJobsFound", noJobsFound);
 
   useEffect(() => {
-    if (!noJobsFound && jobs.length > 0) {
-      const updatedLocations = [...new Set(jobs.map((job) => job.location))];
-      setLocations(updatedLocations);
-      // console.log(updatedLocations, "updatedLocations");
+    const loadJobLocations = async () => {
+      const fetchedLocations = await fetchAllJobLocations();
+      if (fetchedLocations?.success) {
+        setLocations(fetchedLocations.data);
+      }
+    };
 
+    loadJobLocations();
+  }, [jobs]);
+
+  useEffect(() => {
+    if (locations.length > 0) {
       const updatedFilters = jobAccordionFilters.map((filter) => {
         if (filter.trigger === "Location") {
-          return { ...filter, content: updatedLocations };
+          return { ...filter, content: locations };
         }
         return filter;
       });
 
       setJobAccordionFilters(updatedFilters);
     }
-  }, [jobs]);
+  }, [locations]);
+
+  // useEffect(() => {
+  //   if (jobs.length > 0) {
+  //     const updatedLocations = [...new Set(jobs.map((job) => job.location))];
+  //     setLocations(updatedLocations);
+  //     console.log(updatedLocations, "updatedLocations");
+
+  //     const updatedFilters = jobAccordionFilters.map((filter) => {
+  //       if (filter.trigger === "Location") {
+  //         return { ...filter, content: updatedLocations };
+  //       }
+  //       return filter;
+  //     });
+
+  //     setJobAccordionFilters(updatedFilters);
+  //   }
+  // }, [jobs]);
   //--------------------------------------------
   const handleCheckboxChange = (e) => {
     const { name, value, checked } = e.target;
@@ -127,7 +150,7 @@ export default function JobListing({
 
   useEffect(() => {
     setDrawerHeight(window.innerHeight * 0.75);
-    // console.log(drawerHeight, "drawerHeight");
+    console.log(drawerHeight, "drawerHeight");
   }, [drawerHeight]);
   //--------------------------------------------
 

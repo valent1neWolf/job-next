@@ -91,7 +91,10 @@ export default function Header({ user, profileInfo }) {
               {menuItems.map((item) =>
                 item.show ? (
                   <Link
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                      sessionStorage.removeItem("choosenFilters");
+                    }}
                     href={item.path}
                     key={item.label}
                     className="flex w-full items-center py-2 text-lg font-semibold"
@@ -103,7 +106,11 @@ export default function Header({ user, profileInfo }) {
             </div>
           </SheetContent>
         </Sheet>
-        <Link className="hidden lg:flex mr-6 pl-4" href={"/"}>
+        <Link
+          className="hidden lg:flex mr-6 pl-4"
+          href={"/"}
+          onClick={() => sessionStorage.removeItem("choosenFilters")}
+        >
           <img src="/images/kondor-vector.png" alt="logo" className="h-6 " />
         </Link>
         <nav className="ml-auto  hidden lg:flex gap-4 mr-5">
@@ -112,6 +119,7 @@ export default function Header({ user, profileInfo }) {
               <Link
                 href={item.path}
                 key={item.label}
+                onClick={() => sessionStorage.removeItem("choosenFilters")}
                 className="flex w-full items-center px-1 text-lg font-semibold rounded-md"
               >
                 <div className="flex flex-col justify-center items-center mt-2">

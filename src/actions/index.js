@@ -404,3 +404,21 @@ export async function fetchJobsById(ids) {
     };
   }
 }
+
+export async function fetchAllJobLocations() {
+  await connectToDB();
+  try {
+    const locations = await Job.distinct("location");
+    return {
+      success: true,
+      data: locations,
+      message: "Locations fetched successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Locations fetch failed",
+    };
+  }
+}

@@ -191,7 +191,7 @@ export default function CandidateList({
           </div>
           <div className="mt-3">
             <Label htmlFor="letter" className="font-semibold ">
-              Expected Salary
+              Cover Letter
             </Label>
             <p id="letter">
               {currentCandidateDetails?.candidateInfo?.coverLetter || "N/A"}

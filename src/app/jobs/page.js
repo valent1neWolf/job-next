@@ -10,7 +10,7 @@ import {
   fetchBookmarks,
 } from "@/actions";
 import { useEffect, useState, useMemo } from "react";
-import { defaultJobAccordionFilters } from "@/utils";
+import { defaultJobAccordionFilters, LoadingSpinner } from "@/utils";
 import React, { useRef } from "react";
 
 export default function JobsPage() {
@@ -18,16 +18,34 @@ export default function JobsPage() {
   const [profileInfo, setProfileInfo] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [applicationList, setApplicationList] = useState([]);
-  const [choosenFilters, setChoosenFilters] = useState(
-    defaultJobAccordionFilters.map((filter) => ({
-      trigger: filter.trigger,
-      name: filter.name,
-      content: [],
-    }))
-  );
+  const [choosenFilters, setChoosenFilters] = useState(() => {
+    if (typeof window !== "undefined") {
+      const savedFilters = sessionStorage.getItem("choosenFilters");
+      return savedFilters
+        ? JSON.parse(savedFilters)
+        : defaultJobAccordionFilters.map((filter) => ({
+            trigger: filter.trigger,
+            name: filter.name,
+            content: [],
+          }));
+    } else {
+      return defaultJobAccordionFilters.map((filter) => ({
+        trigger: filter.trigger,
+        name: filter.name,
+        content: [],
+      }));
+    }
+  });
   const [bookmarkList, setBookmarkList] = useState([]);
   const [jobToBookmark, setJobToBookmark] = useState(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   console.log(bookmarkList, "bookmarkList");
+
   //--------------------------------------------
   useEffect(() => {
     const loadProfile = async () => {
@@ -90,9 +108,22 @@ export default function JobsPage() {
     loadBookmarkList();
   }, [profileInfo, memoizedChoosenFilters]);
 
-  // console.log(jobs, "jobs");
+  //--------------------------------------------
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("choosenFilters", JSON.stringify(choosenFilters));
+    }
+  }, [choosenFilters]);
 
   //--------------------------------------------
+  if (!isClient) {
+    return (
+      <div className="w-500px h-500px flex justify-center items-center">
+        <LoadingSpinner className="text-gray-200 text-2xl" />
+      </div>
+    );
+  }
+
   return (
     <JobListing
       profileInfo={profileInfo}
