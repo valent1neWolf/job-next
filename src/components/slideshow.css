@@ -1,8 +1,8 @@
 .slideshow-container {
   display: flex;
   animation: slide 60s linear infinite;
-
-  animation-play-state: running; /* Ensure the animation is running by default */
+  transition: transform 0.5s ease-in-out;
+  animation-play-state: running; 
 }
 
 .slideshow-main {
@@ -16,15 +16,15 @@
   mask: var(--mask);
 }
 
-/* Media query for smaller screens */
+
 @media (max-width: 768px) {
   .slideshow-container {
-      animation: slide 70s linear infinite; /* Slower animation */
+      animation: slide 70s linear infinite; 
   }
 
   .slideshow-main {
-      -webkit-mask: none; /* Remove mask */
-      mask: none; /* Remove mask */
+      -webkit-mask: none; 
+      mask: none; 
   }
 }
 
@@ -33,6 +33,6 @@
       transform: translateX(0);
   }
   100% {
-      transform: translateX(-100%);
+      transform: translateX(-50%);
   }
 }

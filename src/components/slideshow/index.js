@@ -44,8 +44,11 @@ export default function Slideshow() {
 
   return (
     <div className="slideshow-main overflow-hidden">
-      <div className="h-fit w-fit flex flex-nowrap gap-4 slideshow-container">
-        {slideShowContent.map((slide, index) => (
+      <div
+        className="h-fit w-fit flex flex-nowrap gap-4 slideshow-container"
+        style={{ transform: "translateX(-50%)" }}
+      >
+        {slideShowContent.concat(slideShowContent).map((slide, index) => (
           <div
             className="w-80 h-72 md:w-96 md:h-80 bg-blue-100 px-2 py-4 rounded-md shadow-lg"
             key={index}
