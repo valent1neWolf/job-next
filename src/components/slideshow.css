@@ -1,0 +1,38 @@
+.slideshow-container {
+  display: flex;
+  animation: slide 60s linear infinite;
+
+  animation-play-state: running; /* Ensure the animation is running by default */
+}
+
+.slideshow-main {
+  --mask: linear-gradient(to right, 
+  rgba(0,0,0, 0) 0,   rgba(0,0,0, 0.7) 5%, 
+  rgba(0,0,0, 1) 10%, rgba(0,0,0, 1) 90%, 
+  rgba(0,0,0, 0.7) 95%, rgba(0,0,0, 0) 100%
+) 100% 50% / 100% 100% repeat-x;
+
+  -webkit-mask: var(--mask); 
+  mask: var(--mask);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .slideshow-container {
+      animation: slide 70s linear infinite; /* Slower animation */
+  }
+
+  .slideshow-main {
+      -webkit-mask: none; /* Remove mask */
+      mask: none; /* Remove mask */
+  }
+}
+
+@keyframes slide {
+  0% {
+      transform: translateX(0);
+  }
+  100% {
+      transform: translateX(-100%);
+  }
+}

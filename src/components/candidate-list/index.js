@@ -124,7 +124,7 @@ export default function CandidateList({
       >
         <DialogContent className="max-h-[70vh] overflow-scroll w-5/6 md:w-full">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="mt-2 ">
               {currentCandidateDetails?.candidateInfo?.name}
             </DialogTitle>
           </DialogHeader>

@@ -298,3 +298,79 @@ export const LoadingSpinner = ({ className }) => (
     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
   </svg>
 );
+
+//------------------------------------------------------------
+export const slideShowContent = [
+  {
+    description:
+      "Kondor has been a game-changer for my job search. The platform is incredibly user-friendly, with intuitive navigation and a sleek design. I appreciated the personalized job recommendations that matched my skills and preferences perfectly.",
+    image: "/images/avatar1.png",
+    reviewer: "Jessica",
+  },
+  {
+    description:
+      "I’ve used several job searching platforms in the past, but Kondor stands out for its accuracy and ease of use. The filtering options are excellent, allowing me to narrow down my search to exactly what I was looking for. ",
+    image: "/images/avatar2.png",
+    reviewer: "Rebecca",
+  },
+  {
+    description:
+      "The quality of job listings is top-notch, with reputable companies and competitive salaries. The application process is seamless, and I love that I can track my application status directly through the site. ",
+    image: "/images/avatar3.png",
+    reviewer: "Anna",
+  },
+  {
+    description:
+      "Kondor made my job hunt so much less stressful. The site is well-organized, and it’s clear that they put a lot of thought into the user experience. The detailed company profiles and employee reviews helped me make informed decisions about where to apply.",
+    image: "/images/avatar4.png",
+    reviewer: "John",
+  },
+  {
+    description:
+      "I was impressed by the breadth of industries and roles available on the platform. Kondor’s customer service is also excellent—when I had a question about my profile, they responded promptly and were extremely helpful. ",
+    image: "/images/avatar5.png",
+    reviewer: "Tony",
+  },
+  {
+    description:
+      "Kondor truly exceeded my expectations. From the moment I signed up, I was impressed by how easy it was to create a profile and start searching for jobs. The platform offers a great mix of remote and in-office opportunities, which was perfect for my needs.",
+    image: "/images/avatar6.png",
+    reviewer: "Ezekiel",
+  },
+  {
+    description:
+      "Kondor has been a game-changer for my job search. The platform is incredibly user-friendly, with intuitive navigation and a sleek design. I appreciated the personalized job recommendations that matched my skills and preferences perfectly.",
+    image: "/images/avatar1.png",
+    reviewer: "Jessica",
+  },
+  {
+    description:
+      "I’ve used several job searching platforms in the past, but Kondor stands out for its accuracy and ease of use. The filtering options are excellent, allowing me to narrow down my search to exactly what I was looking for. ",
+    image: "/images/avatar2.png",
+    reviewer: "Rebecca",
+  },
+  {
+    description:
+      "The quality of job listings is top-notch, with reputable companies and competitive salaries. The application process is seamless, and I love that I can track my application status directly through the site. ",
+    image: "/images/avatar3.png",
+    reviewer: "Anna",
+  },
+  {
+    description:
+      "Kondor made my job hunt so much less stressful. The site is well-organized, and it’s clear that they put a lot of thought into the user experience. The detailed company profiles and employee reviews helped me make informed decisions about where to apply.",
+    image: "/images/avatar4.png",
+    reviewer: "John",
+  },
+  {
+    description:
+      "I was impressed by the breadth of industries and roles available on the platform. Kondor’s customer service is also excellent—when I had a question about my profile, they responded promptly and were extremely helpful. ",
+    image: "/images/avatar5.png",
+    reviewer: "Tony",
+  },
+  {
+    description:
+      "Kondor truly exceeded my expectations. From the moment I signed up, I was impressed by how easy it was to create a profile and start searching for jobs. The platform offers a great mix of remote and in-office opportunities, which was perfect for my needs.",
+    image: "/images/avatar6.png",
+    reviewer: "Ezekiel",
+  },
+];
