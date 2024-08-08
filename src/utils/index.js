@@ -374,3 +374,21 @@ export const slideShowContent = [
     reviewer: "Ezekiel",
   },
 ];
+
+export const membershipPlans = [
+  {
+    heading: "Esentials",
+    price: "7",
+    type: "eseentials",
+  },
+  {
+    heading: "Extra",
+    price: "13",
+    type: "extra",
+  },
+  {
+    heading: "Premium",
+    price: "15",
+    type: "premium",
+  },
+];

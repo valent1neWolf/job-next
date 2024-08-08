@@ -59,7 +59,7 @@ export default function Slideshow() {
                 alt={`reviewers avatar ${index}`}
                 className="float-right w-1/5 pl-2"
               />
-              <div className="w-4/5 float-left italic relative h-full text-sm md:text-base">
+              <div className="w-4/5 float-left italic relative h-full text-sm md:text-base select-none">
                 <p>"{slide.description}"</p>
                 <p className="absolute bottom-0 right-0">-{slide.reviewer}</p>
               </div>

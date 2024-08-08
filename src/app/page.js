@@ -4,6 +4,8 @@ import { fetchProfile } from "@/actions";
 import HomePageButton from "@/components/home-page-button";
 import HomePageImage from "@/components/home-page-image";
 import Slideshow from "@/components/slideshow";
+import HomeRecruiterButton from "@/components/home-recruiter-button";
+import HomeMobileImage from "@/components/home-mobile-images";
 
 export default async function Home() {
   const user = await currentUser();
@@ -19,14 +21,13 @@ export default async function Home() {
   return (
     <section className="flex flex-col items-center justify-center h-full">
       <div className="relative w-full">
-        <div className="min-h-screen">
+        <div className="min-h-screen space-y-16">
           <div className="m-auto p-0 flex items-center">
             <div className="flex items-center flex-wrap  lg:gap-0">
               <div className="lg:hidden w-full relative">
-                <img
-                  className="relative ml-auto"
-                  src="https://shorturl.at/msw07"
-                  alt="home people image"
+                <HomeMobileImage
+                  alt={"home people image"}
+                  src={"/home-image.svg"}
                 />
                 {/* <img
                   className="absolute top-0 left-1/2 transform -translate-x-1/2  w-2/5"
@@ -47,6 +48,36 @@ export default async function Home() {
               </div>
 
               <HomePageImage />
+            </div>
+          </div>
+          <div className="m-auto p-0 flex items-center">
+            <div className="flex items-center flex-wrap  lg:gap-0">
+              <div className="lg:hidden w-full relative">
+                <HomeMobileImage
+                  src={"/images/resume-image.png"}
+                  alt={"resume image"}
+                />
+              </div>
+
+              <div className="hidden relative lg:flex lg:items-center lg:justify-center lg:w-7/12">
+                <img
+                  className="relative ml-auto"
+                  src="/job-hunt.svg"
+                  alt="job hunt image"
+                />
+              </div>
+              <div className="lg:w-5/12 lg:space-y-8">
+                <span className="text-4xl lg:text-5xl font-bold ">
+                  Reach a broader audience
+                </span>
+                <p className="text-lg text-gray-600 text-justify">
+                  If you are an employer looking for the best talent, you are in
+                  the right place. It has never been easier to find the right
+                  person for the job, thanks to Kondor's straightforward
+                  solutions. Post your job listing today.
+                </p>
+                <HomeRecruiterButton />
+              </div>
             </div>
           </div>
           <div className="mt-10 mb-20">

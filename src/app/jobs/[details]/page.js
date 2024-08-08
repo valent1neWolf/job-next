@@ -5,18 +5,22 @@ import {
   fetchApplicationsCandidate,
   fetchApplicationsRecruiter,
   createJobApplication,
+  fetchSingleBookmark,
+  bookmarkJobAction,
 } from "@/actions";
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { set } from "mongoose";
 export default function Page({ params }) {
   const { user } = useUser();
   const [job, setJob] = useState(null);
   const [recruiterProfile, setRecruiterProfile] = useState(null);
   const [applicationList, setApplicationList] = useState([]);
   const [profileInfo, setProfileInfo] = useState(null);
+  const [bookmark, setBookmark] = useState(null);
   const router = useRouter();
 
   //--------------------------------------------
@@ -96,6 +100,49 @@ export default function Page({ params }) {
     }
   }
 
+  useEffect(() => {
+    const loadBookmark = async () => {
+      if (user?.id && job?._id) {
+        const result = await fetchSingleBookmark(job._id, user?.id);
+        if (result.success) {
+          setBookmark(result.data);
+        }
+      }
+    };
+
+    loadBookmark();
+  }, [job]);
+  console.log(bookmark, "bookmark");
+
+  async function handleBookmarkAction(job) {
+    console.log("bookmarking job", job);
+    if (profileInfo?.role === "candidate") {
+      const existingBookmark =
+        bookmark?.jobId === job?._id && bookmark?.candidateUserId === user?.id;
+      console.log("existingBookmark", existingBookmark);
+
+      if (!existingBookmark) {
+        console.log("User object:", user); // Log user object
+        console.log("Profile Info:", profileInfo); // Log profile info
+        const data = {
+          name: profileInfo.candidateInfo.name,
+          email: profileInfo.email,
+          candidateUserId: user?.id || profileInfo.userId,
+          jobId: job._id,
+          jobSaveDate: new Date().toISOString(),
+        };
+
+        console.log("Data to be sent:", data); // Log data object
+
+        const result = await bookmarkJobAction(data);
+        if (result.success) {
+          setBookmark(result.data);
+        }
+        console.log("Result from bookmarkJobAction:", result); // Log result
+      }
+    }
+  }
+
   console.log("applications", applicationList);
   console.log(profileInfo, "profileInfo");
   console.log(user, "user");
@@ -133,7 +180,7 @@ export default function Page({ params }) {
           </p>
           <div>
             <Button
-              className="bg-blue-700 text-lg   rounded-3xl py-1 mt-4 px-5 hover:bg-blue-600 mr-3"
+              className="bg-blue-700 text-lg   rounded-xl py-1 mt-4 px-5 hover:bg-blue-600 mr-3"
               onClick={handleJobApply}
               disabled={
                 applicationList.findIndex((app) => app.jobId === job?._id) !==
@@ -144,7 +191,16 @@ export default function Page({ params }) {
             >
               Apply
             </Button>
-            <Button className="bg-white text-lg border border-blue-700 text-blue-700 rounded-3xl py-1 mt-4 px-5 hover:bg-blue-100">
+            <Button
+              className="disabled:opacity-65 bg-white text-lg border border-blue-700 text-blue-700 rounded-xl py-1 mt-4 px-5 hover:bg-blue-100"
+              onClick={() => handleBookmarkAction(job)}
+              disabled={
+                bookmark?.jobId === job?._id &&
+                bookmark?.candidateUserId === user?.id
+                  ? true
+                  : false
+              }
+            >
               Save
             </Button>
           </div>

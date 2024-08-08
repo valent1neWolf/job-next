@@ -1,7 +1,9 @@
-export default function membership() {
+import Membership from "@/components/membership";
+
+export default async function MembershipPage() {
   return (
     <div>
-      <h1>Membership</h1>
+      <Membership />
     </div>
   );
 }

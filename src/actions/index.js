@@ -386,6 +386,28 @@ export async function fetchBookmarkedJobs(ids) {
   }
 }
 
+//fetch sigle bookmark
+export async function fetchSingleBookmark(id, userId) {
+  await connectToDB();
+  try {
+    const bookmark = await Bookmark.findOne({
+      jobId: id,
+      candidateUserId: userId,
+    });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(bookmark)),
+      message: "Bookmark fetched successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Bookmark fetch failed",
+    };
+  }
+}
+
 //fetch jobs by id
 export async function fetchJobsById(ids) {
   await connectToDB();
