@@ -377,18 +377,26 @@ export const slideShowContent = [
 
 export const membershipPlans = [
   {
-    heading: "Esentials",
-    price: "7",
-    type: "eseentials",
+    heading: "Tier 1",
+    price: "17",
+    type: "basic",
+    description:
+      "We recommend this plan for individuals, freelancers, and smaller teams.",
   },
   {
-    heading: "Extra",
-    price: "13",
-    type: "extra",
+    heading: "Tier 2",
+    price: "50",
+    type: "teams",
+    description:
+      "This is a great match for growing companies and medium-sized teams. The max number of users is 15.",
+    extra: "2 months",
   },
   {
-    heading: "Premium",
-    price: "15",
-    type: "premium",
+    heading: "Tier 3",
+    price: "100",
+    type: "enterprise",
+    description:
+      "This plan is designed for large companies and organizations. The max number of users is 50.",
+    extra: "5 months",
   },
 ];

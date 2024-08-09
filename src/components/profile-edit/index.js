@@ -72,7 +72,7 @@ export default function EditButton({ profileInfo, user, formControls }) {
             recruiterInfo: formData,
           }
         : null;
-    const result = await editProfileInfo(profileInfo._id, data);
+    const result = await editProfileInfo(profileInfo._id, data, "/account");
     if (result.success) {
       redirect("/account");
     }

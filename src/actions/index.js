@@ -6,6 +6,9 @@ import Job from "@/models/job";
 import { revalidatePath } from "next/cache";
 import Application from "@/models/application";
 import Bookmark from "@/models/bookmark";
+import "dotenv/config";
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 //create profile action
 export async function createProfile(formData, pathToRevalidate) {
@@ -156,10 +159,11 @@ export async function fetchJobsCandidate(filters) {
   }
 }
 
-export async function editProfileInfo(id, formData) {
+export async function editProfileInfo(id, formData, pathToRevalidate) {
   await connectToDB();
   try {
     await Profile.findByIdAndUpdate(id, formData);
+    await revalidatePath(pathToRevalidate);
     return {
       success: true,
       message: "Profile updated successfully",
@@ -443,4 +447,36 @@ export async function fetchAllJobLocations() {
       message: "Locations fetch failed",
     };
   }
+}
+
+//price id based on plan
+export async function createPriceIdAction(data) {
+  const session = await stripe.prices.create({
+    unit_amount: data.amount * 100,
+    currency: "eur",
+    recurring: { interval: "month" },
+    product_data: {
+      name: "Premium Plan",
+    },
+  });
+
+  return {
+    success: true,
+    id: session?.id,
+  };
+}
+// payment logic
+export async function createStripePaymentAction(data) {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: data?.lineItems,
+    mode: "subscription",
+    success_url: "http://localhost:3000/membership" + "?status=success",
+    cancel_url: "http://localhost:3000/membership" + "?status=cancel",
+  });
+
+  return {
+    success: true,
+    id: session?.id,
+  };
 }
