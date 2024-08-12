@@ -490,8 +490,12 @@ export async function createStripePaymentAction(data) {
     payment_method_types: ["card"],
     line_items: data?.lineItems,
     mode: "subscription",
-    success_url: "http://localhost:3000/membership" + "?status=success",
-    cancel_url: "http://localhost:3000/membership" + "?status=cancel",
+    // success_url: "http://localhost:3000/membership" + "?status=success",
+    // cancel_url: "http://localhost:3000/membership" + "?status=cancel",
+    success_url:
+      "https://job-next-hf6m.vercel.app/membership" + "?status=success",
+    cancel_url:
+      "https://job-next-hf6m.vercel.app/membership" + "?status=cancel",
   });
 
   return {
