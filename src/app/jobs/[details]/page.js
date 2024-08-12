@@ -59,8 +59,8 @@ export default function Page({ params }) {
     fetchRecruiterProfile();
   }, [job?.recruiterId]);
 
-  console.log(job, "job");
-  console.log(recruiterProfile, "recruiter data");
+  // console.log(job, "job");
+  // console.log(recruiterProfile, "recruiter data");
 
   //--------------------------------------------
   useEffect(() => {
@@ -112,18 +112,15 @@ export default function Page({ params }) {
 
     loadBookmark();
   }, [job]);
-  console.log(bookmark, "bookmark");
 
   async function handleBookmarkAction(job) {
-    console.log("bookmarking job", job);
+    // console.log("bookmarking job", job);
     if (profileInfo?.role === "candidate") {
       const existingBookmark =
         bookmark?.jobId === job?._id && bookmark?.candidateUserId === user?.id;
-      console.log("existingBookmark", existingBookmark);
+      // console.log("existingBookmark", existingBookmark);
 
       if (!existingBookmark) {
-        console.log("User object:", user); // Log user object
-        console.log("Profile Info:", profileInfo); // Log profile info
         const data = {
           name: profileInfo.candidateInfo.name,
           email: profileInfo.email,
@@ -132,20 +129,14 @@ export default function Page({ params }) {
           jobSaveDate: new Date().toISOString(),
         };
 
-        console.log("Data to be sent:", data); // Log data object
-
         const result = await bookmarkJobAction(data);
         if (result.success) {
           setBookmark(result.data);
         }
-        console.log("Result from bookmarkJobAction:", result); // Log result
       }
     }
   }
 
-  console.log("applications", applicationList);
-  console.log(profileInfo, "profileInfo");
-  console.log(user, "user");
   //--------------------------------------------
   return (
     <div className="grid grid-cols-1 gap-x-3 md:grid-cols-4">
@@ -178,32 +169,34 @@ export default function Page({ params }) {
             <img src="/people.svg" alt="people-svg" className="mr-2 w-5" />
             {recruiterProfile?.recruiterInfo?.companySize} employees work here
           </p>
-          <div>
-            <Button
-              className="bg-blue-700 text-lg   rounded-xl py-1 mt-4 px-5 hover:bg-blue-600 mr-3"
-              onClick={handleJobApply}
-              disabled={
-                applicationList.findIndex((app) => app.jobId === job?._id) !==
-                -1
-                  ? true
-                  : false
-              }
-            >
-              Apply
-            </Button>
-            <Button
-              className="disabled:opacity-65 bg-white text-lg border border-blue-700 text-blue-700 rounded-xl py-1 mt-4 px-5 hover:bg-blue-100"
-              onClick={() => handleBookmarkAction(job)}
-              disabled={
-                bookmark?.jobId === job?._id &&
-                bookmark?.candidateUserId === user?.id
-                  ? true
-                  : false
-              }
-            >
-              Save
-            </Button>
-          </div>
+          {profileInfo?.role === "candidate" ? (
+            <div>
+              <Button
+                className="bg-blue-700 text-lg   rounded-xl py-1 mt-4 px-5 hover:bg-blue-600 mr-3"
+                onClick={handleJobApply}
+                disabled={
+                  applicationList.findIndex((app) => app.jobId === job?._id) !==
+                  -1
+                    ? true
+                    : false
+                }
+              >
+                Apply
+              </Button>
+              <Button
+                className="disabled:opacity-65 bg-white text-lg border border-blue-700 text-blue-700 rounded-xl py-1 mt-4 px-5 hover:bg-blue-100"
+                onClick={() => handleBookmarkAction(job)}
+                disabled={
+                  bookmark?.jobId === job?._id &&
+                  bookmark?.candidateUserId === user?.id
+                    ? true
+                    : false
+                }
+              >
+                Save
+              </Button>
+            </div>
+          ) : null}
         </div>
         <div className="bg-gray-100 rounded-md border border-gray-300 p-4 mt-4">
           <h1 className="text-xl font-semibold mt-6">About the company</h1>
@@ -227,7 +220,7 @@ export default function Page({ params }) {
       <div className="hidden md:col-span-1 md:block">
         <div className="bg-gray-100 rounded-md border border-gray-300 px-4 pt-4 pb-2 flex flex-col">
           <p className="font-semibold mb-1">Job search based on your profile</p>
-          <p>
+          <p className="text-justify lg:text-start">
             With Premium you can get access to jobs that match your profile.
             This is a great way to get a job that you would love.
           </p>
@@ -239,7 +232,7 @@ export default function Page({ params }) {
           >
             <span className="hidden lg:inline">Upgrade to </span>&#8203; Premium
           </Button>
-          <p className="mt-3 text-xs">Try 7 day free trial</p>
+          <p className="mt-3 text-xs ">Try 7 day free trial</p>
         </div>
       </div>
     </div>

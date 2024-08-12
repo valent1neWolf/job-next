@@ -25,11 +25,6 @@ export default function JobAplicants({
   job,
   drawerHeight,
 }) {
-  // if (applicationList.length > 0) {
-  //   console.log(applicationList, "applicationList in JobAplicants");
-  //   console.log(job, "job in JobAplicants");
-  // }
-
   return (
     <Drawer open={showApplicantsDrawer} onOpenChange={setShowApplicantsDrawer}>
       <DrawerContent>

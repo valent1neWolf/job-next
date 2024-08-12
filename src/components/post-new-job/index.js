@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +15,15 @@ import "../component_style.css";
 import { initialPostNewJobFormData, postNewJobFormControls } from "@/utils";
 import { postNewJobAction } from "@/actions";
 import { redirect } from "next/navigation";
-export default function PostNewJob({ profileInfo, user }) {
+import Link from "next/link";
+
+export default function PostNewJob({ profileInfo, user, jobsCount }) {
   const [isOpen, setIsOpen] = useState(false);
   const [jobFormData, setJobFormData] = useState({
     ...initialPostNewJobFormData,
     companyName: profileInfo?.recruiterInfo?.companyName,
   });
+  const { toast } = useToast();
 
   useEffect(() => {
     setJobFormData((currentFormData) => ({
@@ -27,6 +31,18 @@ export default function PostNewJob({ profileInfo, user }) {
       companyName: profileInfo?.recruiterInfo?.companyName,
     }));
   }, [profileInfo]);
+
+  function handleAddNewJob() {
+    if (!profileInfo?.isPremiumUser && jobsCount >= 5) {
+      toast({
+        variant: "destructive",
+        title: "On the free plan you can only 5 active jobs. ",
+        description: "Upgrade to premium to post more jobs.",
+      });
+    } else {
+      setIsOpen(true);
+    }
+  }
 
   function handleJobFormValid() {
     return (
@@ -52,7 +68,7 @@ export default function PostNewJob({ profileInfo, user }) {
   return (
     <>
       <Button
-        onClick={() => setIsOpen(true)}
+        onClick={handleAddNewJob}
         className="disabled:opacity-60 flex h-11 items-center bg-transparent rounded-full hover:bg-transparent justify-center p-2 ml-2 md:bg-black md:text-white md:rounded-md md:shadow-md md:font-semibold md:py-2 md:px-4 md:mt-0 md:ml-4 md:hover:bg-gray-800"
       >
         <span className="md:block hidden">Create Job</span>

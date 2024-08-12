@@ -7,6 +7,7 @@ import {
   fetchApplicationsCandidate,
   fetchApplicationsRecruiter,
   fetchBookmarks,
+  fetchRecruiterJobCount,
 } from "@/actions";
 import { useEffect, useState, useMemo } from "react";
 import { defaultJobAccordionFilters, LoadingSpinner } from "@/utils";
@@ -14,6 +15,7 @@ import React, { useRef } from "react";
 
 export default function Jobs({ profileInfo, user }) {
   const [jobs, setJobs] = useState([]);
+  const [jobsCount, setJobsCount] = useState(0);
   const [applicationList, setApplicationList] = useState([]);
   const [choosenFilters, setChoosenFilters] = useState(() => {
     if (typeof window !== "undefined") {
@@ -59,7 +61,9 @@ export default function Jobs({ profileInfo, user }) {
           user?.id,
           memoizedChoosenFilters
         );
+        const fetchedJobsCount = await fetchRecruiterJobCount(user?.id);
         setJobs(fetchedJobs?.data.reverse());
+        setJobsCount(fetchedJobsCount?.data);
       } else if (profileInfo?.role === "candidate") {
         const fetchedJobs = await fetchJobsCandidate(memoizedChoosenFilters);
         setJobs(fetchedJobs?.data.reverse());
@@ -124,6 +128,8 @@ export default function Jobs({ profileInfo, user }) {
       setBookmarkList={setBookmarkList}
       jobToBookmark={jobToBookmark}
       setJobToBookmark={setJobToBookmark}
+      jobsCount={jobsCount}
+      setJobsCount={setJobsCount}
     />
   );
 }

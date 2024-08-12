@@ -14,7 +14,7 @@ export default async function Home() {
   const profileInfo = await fetchProfile(user?.id);
 
   if (user && !profileInfo?.data?._id) {
-    console.log(profileInfo, "profileInfo");
+    // console.log(profileInfo, "profileInfo");
     redirect("/onboard");
   }
 

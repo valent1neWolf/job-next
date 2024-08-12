@@ -31,6 +31,7 @@ export default function JobCards({
   setBookmarkList,
   jobToBookmark,
   setJobToBookmark,
+  setJobsCount,
 }) {
   const [showApplicantsDrawer, setShowApplicantsDrawer] = useState(false);
   const [currentCandidateDetails, setCurrentCandidateDetails] = useState(null);
@@ -56,6 +57,7 @@ export default function JobCards({
     await deleteJob(id);
     // lehet, hogy ezt nem szabadna csinálni, de legalább látszatra megoldja a problémát (más megoldás nem jut eszembe)
     setJobs((currentJobs) => currentJobs.filter((job) => job._id !== id));
+    setJobsCount((currentCount) => currentCount - 1);
   }
   //----------------------------------------------------------
   async function handleBookmarkAction(job) {

@@ -113,7 +113,7 @@ export default function Header({ user, profileInfo }) {
         >
           <img src="/images/kondor-vector.png" alt="logo" className="h-6 " />
         </Link>
-        <nav className="ml-auto  hidden lg:flex gap-4 mr-5">
+        <nav className="ml-auto  hidden lg:flex gap-4 mr-2">
           {menuItems.map((item) =>
             item.show ? (
               <Link
@@ -129,23 +129,24 @@ export default function Header({ user, profileInfo }) {
               </Link>
             ) : null
           )}
-          <div className=" flex justify-center ">
-            <div className="mt-2 flex flex-col justify-center items-center px-1">
-              <UserButton
-                id="me"
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "w-5 h-5",
-                  },
-                }}
-              ></UserButton>
-              {user ? (
+          {user ? (
+            <div className=" flex justify-center ">
+              <div className="mt-2 flex flex-col justify-center items-center ">
+                <UserButton
+                  id="me"
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: "w-5 h-5",
+                    },
+                  }}
+                ></UserButton>
+
                 <Label htmlFor="me" className="text-xs  pt-1 text-gray-600">
                   Profile
                 </Label>
-              ) : null}
+              </div>
             </div>
-          </div>
+          ) : null}
         </nav>
         <div className="pt-1 px-3 lg:hidden mt-0.5">
           <UserButton

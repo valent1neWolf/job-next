@@ -10,9 +10,6 @@ function OnBoardPage() {
   const [profileInfo, setProfileInfo] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  useEffect(() => {
-    console.log(profileInfo, "profileInfo");
-  }, [profileInfo]);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -28,9 +25,7 @@ function OnBoardPage() {
   }, [user?.id, loading]);
 
   useEffect(() => {
-    console.log("ProfileInfo useEffect triggered:", profileInfo);
     if (profileInfo) {
-      console.log("Redirecting based on profileInfo:", profileInfo);
       if (profileInfo.role === "recruiter" && !profileInfo.isPremiumUser) {
         router.push("/membership");
       } else {

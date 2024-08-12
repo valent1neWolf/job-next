@@ -96,6 +96,24 @@ export async function fetchJobsRecruiter(id, filters) {
   }
 }
 
+export async function fetchRecruiterJobCount(userId) {
+  await connectToDB();
+  try {
+    const jobCount = await Job.countDocuments({ recruiterId: userId });
+    return {
+      success: true,
+      data: jobCount,
+      message: "Job count fetched successfully",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      success: false,
+      message: "Job count fetch failed",
+    };
+  }
+}
+
 //munka törlése
 export async function deleteJob(id) {
   await connectToDB();
@@ -431,10 +449,11 @@ export async function fetchJobsById(ids) {
   }
 }
 
-export async function fetchAllJobLocations() {
+export async function fetchAllJobLocations(userId = null) {
   await connectToDB();
   try {
-    const locations = await Job.distinct("location");
+    const query = userId ? { recruiterId: userId } : {};
+    const locations = await Job.distinct("location", query);
     return {
       success: true,
       data: locations,

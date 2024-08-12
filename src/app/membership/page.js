@@ -4,16 +4,10 @@ import { fetchProfile } from "@/actions";
 import { redirect } from "next/navigation";
 export default async function MembershipPage() {
   const user = await currentUser();
-  console.log(user, "user from current user");
 
   const profileResponse = await fetchProfile(user?.id);
   const profileInfo = profileResponse?.data;
-  console.log(profileInfo, "profileInfo from fetchProfile");
 
-  // if (user && !profileInfo?.data?._id) {
-  //   console.log(profileInfo, "profileInfo");
-  //   redirect("/onboard");
-  // }
   if (!profileResponse?.data) {
     redirect("/onboard");
   }

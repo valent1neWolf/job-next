@@ -39,6 +39,8 @@ export default function JobListing({
   setBookmarkList,
   jobToBookmark,
   setJobToBookmark,
+  jobsCount,
+  setJobsCount,
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [hovered, setHovered] = useState(null);
@@ -57,7 +59,8 @@ export default function JobListing({
 
   useEffect(() => {
     const loadJobLocations = async () => {
-      const fetchedLocations = await fetchAllJobLocations();
+      const userId = profileInfo?.role === "recruiter" ? user.id : null;
+      const fetchedLocations = await fetchAllJobLocations(userId);
       if (fetchedLocations?.success) {
         setLocations(fetchedLocations.data);
       }
@@ -177,6 +180,7 @@ export default function JobListing({
                 profileInfo={profileInfo}
                 user={user}
                 setJobs={setJobs}
+                jobsCount={jobsCount}
               />
             ) : null}
           </div>
@@ -207,6 +211,7 @@ export default function JobListing({
               setBookmarkList={setBookmarkList}
               jobToBookmark={jobToBookmark}
               setJobToBookmark={setJobToBookmark}
+              setJobsCount={setJobsCount}
             />
           </div>
           <div className=" hidden bg-gray-200 mt-3 rounded-md md:block md:col-span-1 h-max">

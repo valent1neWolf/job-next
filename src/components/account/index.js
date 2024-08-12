@@ -30,12 +30,6 @@ export default function Account({ profileInfo }) {
   const [applications, setApplications] = useState([]);
   const [applicationJobs, setApplicationJobs] = useState([]);
   //--------------------------------------------
-  console.log(user, "user");
-
-  // console.log("profileInfo", profileInfo);
-  // console.log("user", user);
-  // console.log("bookmarkList", bookmarkList);
-  console.log("applications", applications);
 
   //--------------------------------------------
   function changeProlifePicture() {
@@ -80,18 +74,16 @@ export default function Account({ profileInfo }) {
   //--------------------------------------------
   useEffect(() => {
     const loadBookmarkedJobs = async () => {
-      console.log("bookmarkList in the jobs", bookmarkList);
       const data = bookmarkList.map((bookmark) => bookmark.jobId);
-      console.log("data", data);
+
       const fetchedBookmarkedJobs = await fetchBookmarkedJobs(data);
       setBookmarkedJobs(fetchedBookmarkedJobs?.data.reverse());
     };
     loadBookmarkedJobs();
   }, [bookmarkList]);
-  console.log("bookmarkedJobs", bookmarkedJobs);
+
   //--------------------------------------------
   async function handleBookmarkAction(job) {
-    console.log("bookmarking job", job);
     if (profileInfo?.role === "candidate") {
       const candidateUserId = user.id || profileInfo.userId;
       const existingBookmark = bookmarkList.find(
@@ -99,7 +91,7 @@ export default function Account({ profileInfo }) {
           bookmark.jobId === job._id &&
           bookmark.candidateUserId === candidateUserId
       );
-      console.log("existingBookmark", existingBookmark);
+
       if (existingBookmark) {
         const result = await deleteBookmark(existingBookmark._id);
         if (result.success) {
@@ -126,7 +118,6 @@ export default function Account({ profileInfo }) {
     if (profileInfo?.role === "candidate" && user.id) {
       const loadApplicationJobs = async () => {
         const data = applications.map((application) => application.jobId);
-        console.log("data", data);
 
         const fetchedApplicationJobs = await fetchJobsById(data);
         setApplicationJobs(fetchedApplicationJobs?.data);
@@ -135,7 +126,6 @@ export default function Account({ profileInfo }) {
       loadApplicationJobs();
     }
   }, [applications]);
-  console.log("applicationJobs", applicationJobs);
 
   //--------------------------------------------
   return (
