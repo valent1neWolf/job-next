@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { handleCreationTime, capitalize } from "@/utils";
 import CardForApplied from "@/components/card-for-applied";
 import { useRouter } from "next/navigation";
+
 export default function Account({ profileInfo }) {
   const router = useRouter();
   const { user } = useUser();
@@ -29,7 +30,9 @@ export default function Account({ profileInfo }) {
   const [bookmarkedJobs, setBookmarkedJobs] = useState([]);
   const [applications, setApplications] = useState([]);
   const [applicationJobs, setApplicationJobs] = useState([]);
+
   //--------------------------------------------
+  // console.log(user, "user");
 
   //--------------------------------------------
   function changeProlifePicture() {
@@ -38,7 +41,6 @@ export default function Account({ profileInfo }) {
     fileInput.accept = "image/*";
     fileInput.style.display = "none";
 
-    // Ideiglenesen hozzáadjuk a file inputot a DOM-hoz, hogy a felhasználó kiválaszthassa a képet
     document.body.appendChild(fileInput);
 
     fileInput.onchange = function (event) {
@@ -60,9 +62,10 @@ export default function Account({ profileInfo }) {
 
     fileInput.click();
   }
+
   //--------------------------------------------
   useEffect(() => {
-    if (profileInfo?.role === "candidate" && user.id) {
+    if (profileInfo?.role === "candidate" && user?.id) {
       const loadBookmarkList = async () => {
         const fetchedBookmarkList = await fetchBookmarks(user.id);
         setBookmarkList(fetchedBookmarkList?.data);
@@ -70,14 +73,16 @@ export default function Account({ profileInfo }) {
 
       loadBookmarkList();
     }
-  }, [profileInfo]);
+  }, [profileInfo, user?.id]);
+
   //--------------------------------------------
   useEffect(() => {
     const loadBookmarkedJobs = async () => {
-      const data = bookmarkList.map((bookmark) => bookmark.jobId);
-
-      const fetchedBookmarkedJobs = await fetchBookmarkedJobs(data);
-      setBookmarkedJobs(fetchedBookmarkedJobs?.data.reverse());
+      if (bookmarkList.length > 0) {
+        const data = bookmarkList.map((bookmark) => bookmark.jobId);
+        const fetchedBookmarkedJobs = await fetchBookmarkedJobs(data);
+        setBookmarkedJobs(fetchedBookmarkedJobs?.data.reverse());
+      }
     };
     loadBookmarkedJobs();
   }, [bookmarkList]);
@@ -85,13 +90,12 @@ export default function Account({ profileInfo }) {
   //--------------------------------------------
   async function handleBookmarkAction(job) {
     if (profileInfo?.role === "candidate") {
-      const candidateUserId = user.id || profileInfo.userId;
+      const candidateUserId = user?.id || profileInfo.userId;
       const existingBookmark = bookmarkList.find(
         (bookmark) =>
           bookmark.jobId === job._id &&
           bookmark.candidateUserId === candidateUserId
       );
-
       if (existingBookmark) {
         const result = await deleteBookmark(existingBookmark._id);
         if (result.success) {
@@ -102,9 +106,10 @@ export default function Account({ profileInfo }) {
       }
     }
   }
+
   //--------------------------------------------
   useEffect(() => {
-    if (profileInfo?.role === "candidate" && user.id) {
+    if (profileInfo?.role === "candidate" && user?.id) {
       const loadApplications = async () => {
         const fetchedApplications = await fetchApplicationsCandidate(user.id);
         setApplications(fetchedApplications?.data.reverse());
@@ -112,20 +117,22 @@ export default function Account({ profileInfo }) {
 
       loadApplications();
     }
-  }, [profileInfo]);
+  }, [profileInfo, user?.id]);
+
   //--------------------------------------------
   useEffect(() => {
-    if (profileInfo?.role === "candidate" && user.id) {
+    if (profileInfo?.role === "candidate" && user?.id) {
       const loadApplicationJobs = async () => {
-        const data = applications.map((application) => application.jobId);
-
-        const fetchedApplicationJobs = await fetchJobsById(data);
-        setApplicationJobs(fetchedApplicationJobs?.data);
+        if (applications.length > 0) {
+          const data = applications.map((application) => application.jobId);
+          const fetchedApplicationJobs = await fetchJobsById(data);
+          setApplicationJobs(fetchedApplicationJobs?.data);
+        }
       };
 
       loadApplicationJobs();
     }
-  }, [applications]);
+  }, [applications, profileInfo, user?.id]);
 
   //--------------------------------------------
   return (
@@ -135,15 +142,12 @@ export default function Account({ profileInfo }) {
       <Tabs defaultValue="account" className=" mx-auto">
         <TabsList className="rounded-t-none">
           <TabsTrigger value="account">Personal</TabsTrigger>
-          {
-            // Only show tabs if user is a candidate
-            profileInfo?.role === "candidate" && (
-              <>
-                <TabsTrigger value="applied">Applied</TabsTrigger>
-                <TabsTrigger value="saved">Saved</TabsTrigger>
-              </>
-            )
-          }
+          {profileInfo?.role === "candidate" && (
+            <>
+              <TabsTrigger value="applied">Applied</TabsTrigger>
+              <TabsTrigger value="saved">Saved</TabsTrigger>
+            </>
+          )}
         </TabsList>
 
         <TabsContent value="account" className="mt-5 ml-1">
@@ -240,131 +244,120 @@ export default function Account({ profileInfo }) {
             </div>
           ) : null}
         </TabsContent>
-        {
-          // Only show tabs if user is a candidate
-          profileInfo?.role === "candidate" && (
-            <TabsContent value="applied">
-              <h1 className="text-xl font-semibold my-2">Accepted</h1>
-              {applications && applications.length > 0 ? (
-                applications
-                  .filter((application) =>
-                    application.status.includes("selected")
-                  )
-                  .map((application) => (
-                    <CardForApplied
-                      key={application.id}
-                      job={applicationJobs.find(
-                        (job) => job._id === application.jobId
+        {profileInfo?.role === "candidate" && (
+          <TabsContent value="applied">
+            <h1 className="text-xl font-semibold my-2">Accepted</h1>
+            {applications && applications.length > 0 ? (
+              applications
+                .filter((application) =>
+                  application.status.includes("selected")
+                )
+                .map((application) => (
+                  <CardForApplied
+                    key={application.id}
+                    job={applicationJobs.find(
+                      (job) => job._id === application.jobId
+                    )}
+                  />
+                ))
+            ) : (
+              <h1>No applications</h1>
+            )}
+            <h1 className="text-xl font-semibold my-2">Rejected</h1>
+            {applications && applications.length > 0 ? (
+              applications
+                .filter((application) =>
+                  application.status.includes("rejected")
+                )
+                .map((application) => (
+                  <CardForApplied
+                    key={application.id}
+                    job={applicationJobs.find(
+                      (job) => job._id === application.jobId
+                    )}
+                  />
+                ))
+            ) : (
+              <h1>No applications</h1>
+            )}
+            <h1 className="text-xl font-semibold my-2">Still pending</h1>
+            {applications && applications.length > 0 ? (
+              applications
+                .filter(
+                  (application) =>
+                    !application.status.includes("selected") &&
+                    !application.status.includes("rejected")
+                )
+                .map((application) => (
+                  <CardForApplied
+                    key={application.id}
+                    job={applicationJobs.find(
+                      (job) => job._id === application.jobId
+                    )}
+                  />
+                ))
+            ) : (
+              <h1>No applications</h1>
+            )}
+          </TabsContent>
+        )}
+        {profileInfo?.role === "candidate" && (
+          <TabsContent value="saved">
+            {bookmarkedJobs.map((job) => (
+              <div
+                key={job._id}
+                className="bg-gray-100 p-2 rounded-md mt-3 relative"
+              >
+                <h1 className="font-bold text-xl">{capitalize(job?.title)}</h1>
+                <p className="flex items-center pt-1">
+                  <img
+                    src="/building.svg"
+                    alt="building-svg"
+                    className="mr-2"
+                  />
+                  {job?.companyName}
+                </p>
+                <p className="flex items-center pt-1">
+                  <img
+                    src="/location.svg"
+                    alt="location-svg"
+                    className="mr-2"
+                  />
+                  {job?.location}
+                </p>
+                <div className="flex items-end justify-between">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      className="mt-2 px-4"
+                      onClick={() => window.open(`/jobs/${job._id}`)}
+                    >
+                      View <span className="hidden md:inline">&#8203; Job</span>
+                    </Button>
+                    <Button
+                      className={`mt-2 bg-transparent border border-black ${
+                        bookmarkList.find((item) => item.jobId === job?._id)
+                          ? "bg-black"
+                          : "bg-transparent"
+                      }`}
+                      onClick={() => handleBookmarkAction(job)}
+                    >
+                      {bookmarkList.find((item) => item.jobId === job?._id) ? (
+                        <img src="/saved.svg" alt="bookmarked" />
+                      ) : (
+                        <img src="/not-saved.svg" alt="not bookmark" />
                       )}
-                    />
-                  ))
-              ) : (
-                <h1>No applications</h1>
-              )}
-              <h1 className="text-xl font-semibold my-2">Rejected</h1>
-              {applications && applications.length > 0 ? (
-                applications
-                  .filter((application) =>
-                    application.status.includes("rejected")
-                  )
-                  .map((application) => (
-                    <CardForApplied
-                      key={application.id}
-                      job={applicationJobs.find(
-                        (job) => job._id === application.jobId
-                      )}
-                    />
-                  ))
-              ) : (
-                <h1>No applications</h1>
-              )}
-              <h1 className="text-xl font-semibold my-2">Still pending</h1>
-              {applications && applications.length > 0 ? (
-                applications
-                  .filter(
-                    (application) =>
-                      !application.status.includes("selected") &&
-                      !application.status.includes("rejected")
-                  )
-                  .map((application) => (
-                    <CardForApplied
-                      key={application.id}
-                      job={applicationJobs.find(
-                        (job) => job._id === application.jobId
-                      )}
-                    />
-                  ))
-              ) : (
-                <h1>No applications</h1>
-              )}
-            </TabsContent>
-          )
-        }
-        {
-          // Only show tabs if user is a candidate
-          profileInfo?.role === "candidate" && (
-            <TabsContent value="saved">
-              {bookmarkedJobs.map((job) => (
-                <div
-                  key={job._id}
-                  className="bg-gray-100 p-2 rounded-md mt-3 relative"
-                >
-                  <h1 className="font-bold text-xl">
-                    {capitalize(job?.title)}
-                  </h1>
-                  <p className="flex items-center pt-1">
-                    <img
-                      src="/building.svg"
-                      alt="building-svg"
-                      className="mr-2"
-                    />
-                    {job?.companyName}
-                  </p>
-                  <p className="flex items-center pt-1">
-                    <img
-                      src="/location.svg"
-                      alt="location-svg"
-                      className="mr-2"
-                    />
-                    {job?.location}
-                  </p>
-                  <div className="flex items-end justify-between">
-                    <div className="flex items-center gap-3">
-                      <Button
-                        className="mt-2 px-4"
-                        onClick={() => window.open(`/jobs/${job._id}`)}
-                      >
-                        View{" "}
-                        <span className="hidden md:inline">&#8203; Job</span>
-                      </Button>
-                      <Button
-                        className={`mt-2 bg-transparent border border-black ${
-                          bookmarkList.find((item) => item.jobId === job?._id)
-                            ? "bg-black"
-                            : "bg-transparent"
-                        }`}
-                        onClick={() => handleBookmarkAction(job)}
-                      >
-                        {bookmarkList.find(
-                          (item) => item.jobId === job?._id
-                        ) ? (
-                          <img src="/saved.svg" alt="bookmarked" />
-                        ) : (
-                          <img src="/not-saved.svg" alt="not bookmark" />
-                        )}
-                      </Button>
-                    </div>
-                    <div>
-                      <p className="text-sm ">
-                        {handleCreationTime(job?.createdAt)}
-                      </p>
-                    </div>
+                    </Button>
+                  </div>
+                  <div>
+                    <p className="text-sm ">
+                      {handleCreationTime(job?.createdAt)}
+                    </p>
                   </div>
                 </div>
-              ))}
-            </TabsContent>
-          )
-        }
+              </div>
+            ))}
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

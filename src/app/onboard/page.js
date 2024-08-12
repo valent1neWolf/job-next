@@ -14,7 +14,7 @@ function OnBoardPage() {
   useEffect(() => {
     const loadProfile = async () => {
       if (user?.id) {
-        console.log("Loading profile for user ID:", user.id);
+        // console.log("Loading profile for user ID:", user.id);
         const fetchedProfile = await fetchProfile(user.id);
         console.log("Profile fetched:", fetchedProfile?.data);
         setProfileInfo(fetchedProfile?.data);

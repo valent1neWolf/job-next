@@ -5,8 +5,6 @@ import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -31,7 +29,6 @@ export default function CandidateList({
   setShowCurrentCandidateDetails,
   job,
 }) {
-  //   console.log("Rendering CandidateList for job:", job?.title);
   //------------------------------------------
   async function handleFetchCandidateDetails(candidateId) {
     const result = await getCandidateDetailsByIDAction(candidateId);
@@ -40,11 +37,6 @@ export default function CandidateList({
     }
   }
   //------------------------------------------
-  useEffect(() => {
-    if (currentCandidateDetails) {
-      console.log(currentCandidateDetails, "currentCandidateDetails");
-    }
-  }, [currentCandidateDetails]);
 
   useEffect(() => {
     if (!showCurrentCandidateDetails) {
@@ -75,17 +67,14 @@ export default function CandidateList({
       (application) =>
         application?.candidateUserId === currentCandidateDetails?.userId
     );
-    console.log(indexOfCurrentApplication, "indexOfCurrentApplication");
-    // await jobAplicationStatusAction(data, "/jobs");
     const jobApplicantToUpdate = {
       ...copyOfApplicationList[indexOfCurrentApplication],
       status:
         copyOfApplicationList[indexOfCurrentApplication].status.concat(status),
     };
-    console.log(jobApplicantToUpdate, "jobApplicantToUpdate");
+    // console.log(jobApplicantToUpdate, "jobApplicantToUpdate");
     const data = await jobAplicationStatusAction(jobApplicantToUpdate, `/jobs`);
     await setShowCurrentCandidateDetails(false);
-    console.log(data, "data");
   }
 
   return (

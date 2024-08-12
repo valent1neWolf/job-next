@@ -15,7 +15,6 @@ import "../component_style.css";
 import { initialPostNewJobFormData, postNewJobFormControls } from "@/utils";
 import { postNewJobAction } from "@/actions";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 
 export default function PostNewJob({ profileInfo, user, jobsCount }) {
   const [isOpen, setIsOpen] = useState(false);

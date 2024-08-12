@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { capitalize, handleCreationTime } from "@/utils";
-import { useState, useEffect } from "react";
 
 export default function CardForApplied({ key, job }) {
   return (

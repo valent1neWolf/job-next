@@ -43,8 +43,6 @@ export default function Jobs({ profileInfo, user }) {
     setIsClient(true);
   }, []);
 
-  console.log(bookmarkList, "bookmarkList");
-
   //--------------------------------------------
 
   //--------------------------------------------

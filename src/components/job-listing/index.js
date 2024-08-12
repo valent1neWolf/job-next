@@ -19,7 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
+
 import { Label } from "@/components/ui/label";
 import { defaultJobAccordionFilters } from "@/utils";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
@@ -140,20 +140,20 @@ export default function JobListing({
       setOpenedFilters([...openedFilters, trigger]);
     }
   };
-  useEffect(() => {
-    console.log(choosenFilters);
-  }, [choosenFilters]);
+  // useEffect(() => {
+  //   console.log(choosenFilters);
+  // }, [choosenFilters]);
 
   //--------------------------------------------
   //csak így lehet megszerezni a window objektumot client oldalon
   React.useEffect(() => {
     // window is accessible here.
-    console.log("window.innerHeight", window.innerHeight);
+    // console.log("window.innerHeight", window.innerHeight);
   }, []);
 
   useEffect(() => {
     setDrawerHeight(window.innerHeight * 0.75);
-    console.log(drawerHeight, "drawerHeight");
+    // console.log(drawerHeight, "drawerHeight");
   }, [drawerHeight]);
   //--------------------------------------------
 

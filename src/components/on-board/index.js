@@ -28,14 +28,10 @@ export default function OnBoard({ setLoading }) {
   );
   const [file, setFile] = useState(null);
 
-  useEffect(() => {
-    console.log("candidateFormData", candidateFormData);
-  }, [candidateFormData]);
-
   const currenAuthUser = useUser();
-  console.log("currenAuthUser", currenAuthUser);
+
   const { user } = currenAuthUser;
-  console.log("user_email", user?.primaryEmailAddress?.emailAddress);
+  // console.log("user_email", user?.primaryEmailAddress?.emailAddress);
   function handleTabChange(value) {
     setCurrentTab(value);
   }

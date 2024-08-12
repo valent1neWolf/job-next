@@ -43,17 +43,15 @@ export default function JobCards({
   useEffect(() => {
     setIsLoading(false);
   }, [jobs]);
-  // console.log(user, "user");
-  // console.log(bookmarkList, "bookmarkList in job-cards");
+
   //----------------------------------------------------------
   const noJobsFound = choosenFilters.some((filter) => filter.content.length);
-  // console.log(noJobsFound, "noJobsFound");
+
   //----------------------------------------------------------
 
   //----------------------------------------------------------
 
   async function deleteJobAction(id) {
-    console.log("deleting job", id);
     await deleteJob(id);
     // lehet, hogy ezt nem szabadna csinálni, de legalább látszatra megoldja a problémát (más megoldás nem jut eszembe)
     setJobs((currentJobs) => currentJobs.filter((job) => job._id !== id));
@@ -61,7 +59,6 @@ export default function JobCards({
   }
   //----------------------------------------------------------
   async function handleBookmarkAction(job) {
-    console.log("bookmarking job", job);
     if (profileInfo?.role === "candidate") {
       const candidateUserId = user.id || profileInfo.userId;
       const existingBookmark = bookmarkList.find(
@@ -69,7 +66,7 @@ export default function JobCards({
           bookmark.jobId === job._id &&
           bookmark.candidateUserId === candidateUserId
       );
-      console.log("existingBookmark", existingBookmark);
+
       if (existingBookmark) {
         const result = await deleteBookmark(existingBookmark._id);
         if (result.success) {
@@ -78,8 +75,8 @@ export default function JobCards({
           );
         }
       } else {
-        console.log("User object:", user); // Log user object
-        console.log("Profile Info:", profileInfo); // Log profile info
+        // console.log("User object:", user); // Log user object
+        // console.log("Profile Info:", profileInfo); // Log profile info
 
         const data = {
           name: profileInfo.candidateInfo.name,
@@ -89,8 +86,6 @@ export default function JobCards({
           jobSaveDate: new Date().toISOString(),
         };
 
-        console.log("Data to be sent:", data); // Log data object
-
         const result = await bookmarkJobAction(data);
         if (result.success) {
           setBookmarkList((currentBookmarks) => [
@@ -98,7 +93,6 @@ export default function JobCards({
             result.data,
           ]);
         }
-        console.log("Result from bookmarkJobAction:", result); // Log result
       }
     }
   }

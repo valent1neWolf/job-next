@@ -1,11 +1,10 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+
+import { useEffect } from "react";
 import {
   createPriceIdAction,
   createStripePaymentAction,
   editProfileInfo,
-  fetchProfile,
 } from "@/actions";
 import { useRouter, useSearchParams } from "next/navigation";
 import { membershipPlans } from "@/utils";
@@ -19,27 +18,6 @@ export default function Membership({ profileInfo, user }) {
   const router = useRouter();
 
   const pathName = useSearchParams();
-  console.log(user, "user");
-  console.log(profileInfo, "profileInfo");
-
-  // useEffect(() => {
-  //   const loadProfile = async () => {
-  //     // Only proceed if user.id is truthy and profileInfo is not already set or needs update
-  //     if (user?.id && (!profileInfo || profileInfo.userId !== user.id)) {
-  //       const fetchedProfile = await fetchProfile(user.id);
-  //       setProfileInfo(fetchedProfile?.data);
-
-  //       // Redirect to onboard if profile is not found
-  //       if (!fetchedProfile?.data) {
-  //         router.push("/onboard");
-  //       }
-  //     }
-  //   };
-
-  //   if (user) {
-  //     loadProfile();
-  //   }
-  // }, [user?.id]);
 
   async function hanlePayment(getCurrentPlan) {
     const stripe = await stripePromise;
@@ -56,13 +34,11 @@ export default function Membership({ profileInfo, user }) {
           },
         ],
       });
-      console.log(result);
 
       await stripe.redirectToCheckout({
         sessionId: result?.id,
       });
     }
-    console.log(extractPriceId);
   }
 
   async function updateProfile() {
@@ -88,7 +64,6 @@ export default function Membership({ profileInfo, user }) {
       },
       "/membership"
     );
-    console.log(result);
 
     if (result.success) {
       router.push("/membership");
